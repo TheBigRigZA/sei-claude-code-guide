@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code Setup Guide — OpenRouter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#f0f5ff',
+              100: '#e0eaff',
+              200: '#c2d5ff',
+              300: '#94b4ff',
+              400: '#6690ff',
+              500: '#3b6cff',
+              600: '#1a4dff',
+              700: '#0033e0',
+              800: '#002db8',
+              900: '#002899',
+              950: '#001a66',
+            },
+            surface: {
+              50:  '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    pre { white-space: pre; overflow-x: auto; }
+
+    /* Tabs */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .tab-btn.active {
+      border-color: #3b6cff;
+      color: #3b6cff;
+      background-color: #f0f5ff;
+    }
+
+    /* Code blocks — always-visible copy affordance */
+    .code-block {
+      position: relative;
+      cursor: pointer;
+    }
+    .code-block pre {
+      transition: box-shadow 0.15s, border-color 0.15s;
+      border: 1px solid transparent;
+    }
+    .code-block:hover pre {
+      box-shadow: 0 0 0 2px rgba(59, 108, 255, 0.25);
+      border-color: rgba(59, 108, 255, 0.3);
+    }
+    .copy-btn {
+      transition: background-color 0.15s, transform 0.1s;
+    }
+    .copy-btn:active { transform: scale(0.92); }
+    .copy-btn .icon-copy,
+    .copy-btn .icon-check { transition: opacity 0.15s; }
+    .copy-btn.copied .icon-copy { opacity: 0; }
+    .copy-btn.copied .icon-check { opacity: 1; }
+    .copy-btn:not(.copied) .icon-copy { opacity: 1; }
+    .copy-btn:not(.copied) .icon-check { opacity: 0; }
+
+    /* Step cards */
+    .step-card {
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .step-card:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    /* Accordion */
+    details summary { cursor: pointer; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .chevron { transform: rotate(90deg); }
+    .chevron { transition: transform 0.2s; }
+
+    /* Quick ref copy button in table */
+    .qr-row { position: relative; }
+    .qr-copy {
+      transition: opacity 0.15s, background-color 0.15s, transform 0.1s;
+    }
+    .qr-copy:active { transform: scale(0.92); }
+
+    /* Toast notification */
+    .copy-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .copy-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Back to top button */
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 50;
+      opacity: 0;
+      transform: translateY(1rem);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Language toggle */
+    .lang-toggle {
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    .lang-toggle:active { transform: scale(0.95); }
+    .lang-sticky {
+      position: fixed;
+      top: 1rem;
+      right: 2rem;
+      z-index: 50;
+      opacity: 0;
+      transform: translateY(-1rem);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+    .lang-sticky.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Department tabs */
+    .dept-tab-content { display: none; }
+    .dept-tab-content.active { display: block; }
+    .dept-tab-btn.active {
+      border-color: #3b6cff;
+      color: #3b6cff;
+      background-color: #f0f5ff;
+    }
+    .dept-tool-card {
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .dept-tool-card:hover {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+
+    /* Qwen chat */
+    .qwen-messages {
+      max-height: 500px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+    .qwen-user-msg {
+      background: #3b6cff;
+      color: white;
+      border-radius: 1rem 1rem 0.25rem 1rem;
+      max-width: 80%;
+      margin-left: auto;
+    }
+    .qwen-ai-msg {
+      background: #f1f5f9;
+      color: #1e293b;
+      border-radius: 1rem 1rem 1rem 0.25rem;
+      max-width: 80%;
+    }
+    .qwen-ai-msg pre {
+      background: #0f172a;
+      color: #4ade80;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      margin: 0.5rem 0;
+    }
+    .qwen-ai-msg code:not(pre code) {
+      background: #e2e8f0;
+      padding: 0.1rem 0.35rem;
+      border-radius: 0.25rem;
+      font-size: 0.85em;
+    }
+    .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #94a3b8;
+      border-radius: 50%;
+      margin: 0 2px;
+      animation: typingBounce 1.4s infinite ease-in-out;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Print */
+    @media print {
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+
+<body class="bg-surface-50 text-surface-800 antialiased">
+
+  <!-- ───────── HERO ───────── -->
+  <header class="relative overflow-hidden bg-gradient-to-br from-surface-900 via-surface-800 to-brand-950 text-white">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-20 left-10 w-72 h-72 bg-brand-500 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-20 w-96 h-96 bg-brand-400 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative max-w-5xl mx-auto px-6 py-20 text-center">
+      <!-- Language toggle (hero) -->
+      <button onclick="toggleLanguage()" class="lang-toggle absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 rounded-full px-3 py-1.5 text-sm font-medium text-white no-print" title="Switch language">
+        <span id="lang-hero-label">EN | 中文</span>
+      </button>
+      <img src="https://ueeshop.ly200-cdn.com/u_file/UPAO/UPAO310/2010/photo/0d6812b65e.png" alt="SEI Robotics Logo" class="h-48 sm:h-56 mx-auto mb-8 drop-shadow-lg" />
+      <div class="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4 py-1.5 text-sm font-medium mb-6 border border-white/20">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        <span data-i18n="hero.badge">Internal Staff Guide</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+        Claude Code<br class="hidden sm:block" />
+        <span class="text-brand-400" data-i18n="hero.subtitle">Setup Guide</span>
+      </h1>
+      <p class="mt-6 text-lg sm:text-xl text-surface-300 max-w-2xl mx-auto leading-relaxed" data-i18n-html="hero.desc">
+        Install Claude Code and connect it to <strong class="text-white">OpenRouter</strong> for AI-powered coding assistance.
+        Follow the steps below for your operating system.
+      </p>
+      <nav class="mt-10 flex flex-wrap justify-center gap-3 no-print">
+        <a href="#prerequisites" class="rounded-lg bg-brand-600 hover:bg-brand-500 px-5 py-2.5 text-sm font-semibold transition shadow-lg shadow-brand-600/25" data-i18n="hero.cta1">Get Started</a>
+        <a href="#quick-ref" class="rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-2.5 text-sm font-semibold transition" data-i18n="hero.cta2">Quick Reference</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-16 space-y-20">
+
+    <!-- ───────── TABLE OF CONTENTS ───────── -->
+    <nav class="rounded-2xl bg-white border border-surface-200 shadow-sm p-8">
+      <h2 class="text-lg font-bold text-surface-900 mb-4" data-i18n="toc.title">Table of Contents</h2>
+      <ol class="grid sm:grid-cols-2 gap-2 text-sm">
+        <li><a href="#prerequisites" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">1</span><span data-i18n="toc.1">Prerequisites</span></a></li>
+        <li><a href="#openrouter-key" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">2</span><span data-i18n="toc.2">Create an OpenRouter API Key</span></a></li>
+        <li><a href="#install" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">3</span><span data-i18n="toc.3">Install Claude Code</span></a></li>
+        <li><a href="#configure" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">4</span><span data-i18n="toc.4">Configure Environment Variables</span></a></li>
+        <li><a href="#verify" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">5</span><span data-i18n="toc.5">Launch &amp; Verify</span></a></li>
+        <li><a href="#troubleshooting" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">6</span><span data-i18n="toc.6">Troubleshooting</span></a></li>
+        <li><a href="#dept-tools" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">7</span><span data-i18n="toc.7">Department CLI Tools</span></a></li>
+        <li><a href="#ai-assistant" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">8</span><span data-i18n="toc.8">AI Tool Recommendations</span></a></li>
+      </ol>
+    </nav>
+
+    <!-- ───────── PREREQUISITES ───────── -->
+    <section id="prerequisites">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">1</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="prereq.title">Prerequisites</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <div class="text-2xl mb-2">🌐</div>
+          <h3 class="font-semibold text-surface-900 mb-1" data-i18n="prereq.internet">Internet</h3>
+          <p class="text-sm text-surface-600" data-i18n="prereq.internet.desc">Required for installation and API calls.</p>
+        </div>
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <div class="text-2xl mb-2">💻</div>
+          <h3 class="font-semibold text-surface-900 mb-1" data-i18n="prereq.terminal">Terminal</h3>
+          <p class="text-sm text-surface-600" data-i18n="prereq.terminal.desc">macOS Terminal, Linux shell, or Windows PowerShell / CMD.</p>
+        </div>
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <div class="text-2xl mb-2">🔑</div>
+          <h3 class="font-semibold text-surface-900 mb-1" data-i18n="prereq.account">OpenRouter Account</h3>
+          <p class="text-sm text-surface-600" data-i18n-html="prereq.account.desc">Free sign-up at <a href="https://openrouter.ai" class="text-brand-600 hover:underline" target="_blank">openrouter.ai</a>.</p>
+        </div>
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <div class="text-2xl mb-2">📦</div>
+          <h3 class="font-semibold text-surface-900 mb-1" data-i18n-html="prereq.git">Git <span class="text-xs text-surface-400">(Windows only)</span></h3>
+          <p class="text-sm text-surface-600" data-i18n-html="prereq.git.desc">Install <a href="https://git-scm.com/downloads/win" class="text-brand-600 hover:underline" target="_blank">Git for Windows</a> before proceeding.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── OPENROUTER KEY ───────── -->
+    <section id="openrouter-key">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">2</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="key.title">Create an OpenRouter API Key</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden">
+        <ol class="divide-y divide-surface-100">
+          <li class="flex gap-4 p-5 items-start">
+            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">1</span>
+            <div>
+              <p class="font-medium text-surface-900" data-i18n-html="key.step1">Go to <a href="https://openrouter.ai" class="text-brand-600 hover:underline" target="_blank">openrouter.ai</a> and click <strong>Sign Up</strong>.</p>
+              <p class="text-sm text-surface-500 mt-1" data-i18n="key.step1.note">You can sign up with Google, GitHub, or email.</p>
+            </div>
+          </li>
+          <li class="flex gap-4 p-5 items-start">
+            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">2</span>
+            <div>
+              <p class="font-medium text-surface-900" data-i18n-html="key.step2">Navigate to <a href="https://openrouter.ai/settings/keys" class="text-brand-600 hover:underline" target="_blank">Settings &rarr; Keys</a>.</p>
+            </div>
+          </li>
+          <li class="flex gap-4 p-5 items-start">
+            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">3</span>
+            <div>
+              <p class="font-medium text-surface-900" data-i18n-html="key.step3">Click <strong>"Create Key"</strong>.</p>
+              <p class="text-sm text-surface-500 mt-1" data-i18n-html="key.step3.note">Give it a descriptive name, e.g., <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">claude-code-work</code>.</p>
+            </div>
+          </li>
+          <li class="flex gap-4 p-5 items-start">
+            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">4</span>
+            <div>
+              <p class="font-medium text-surface-900" data-i18n="key.step4">Copy your API key immediately.</p>
+              <p class="text-sm text-surface-500 mt-1" data-i18n-html="key.step4.note">It starts with <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">sk-or-v1-</code> and is <strong>only shown once</strong>. Store it in a password manager.</p>
+            </div>
+          </li>
+          <li class="flex gap-4 p-5 items-start">
+            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">5</span>
+            <div>
+              <p class="font-medium text-surface-900" data-i18n-html="key.step5">(Optional) Add credits at <a href="https://openrouter.ai/credits" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/credits</a>.</p>
+              <p class="text-sm text-surface-500 mt-1" data-i18n="key.step5.note">Credits are required to make API calls. Usage is pay-as-you-go.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <div class="mt-4 rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
+        <span class="text-amber-600 text-xl shrink-0">&#9888;</span>
+        <p class="text-sm text-amber-800" data-i18n-html="key.security"><strong>Security reminder:</strong> Treat your API key like a password. Never share it, commit it to git, or paste it in Slack/Teams/email.</p>
+      </div>
+    </section>
+
+    <!-- ───────── INSTALL ───────── -->
+    <section id="install">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">3</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="install.title">Install Claude Code</h2>
+      </div>
+
+      <!-- OS Tabs -->
+      <div class="no-print flex border-b border-surface-200 mb-0 gap-1" role="tablist">
+        <button onclick="switchTab('mac')" class="tab-btn active rounded-t-lg border border-b-0 border-surface-200 px-5 py-2.5 text-sm font-semibold transition" data-tab="mac">macOS</button>
+        <button onclick="switchTab('linux')" class="tab-btn rounded-t-lg border border-b-0 border-transparent px-5 py-2.5 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-tab="linux">Linux / WSL</button>
+        <button onclick="switchTab('windows')" class="tab-btn rounded-t-lg border border-b-0 border-transparent px-5 py-2.5 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-tab="windows">Windows</button>
+      </div>
+
+      <!-- macOS -->
+      <div id="tab-mac" class="tab-content active rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="step-card rounded-xl border border-surface-100 bg-surface-50 p-5">
+          <h4 class="font-semibold text-surface-900 mb-1">Option A &mdash; Native Install <span class="text-xs text-green-700 bg-green-100 rounded-full px-2 py-0.5 ml-1">Recommended</span></h4>
+          <p class="text-sm text-surface-600 mb-3">Auto-updates in the background. Open <strong>Terminal</strong> and run:</p>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+              <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+              <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <span class="ml-5">Copy</span>
+            </button>
+          </div>
+        </div>
+        <div class="step-card rounded-xl border border-surface-100 bg-surface-50 p-5">
+          <h4 class="font-semibold text-surface-900 mb-1">Option B &mdash; Homebrew</h4>
+          <p class="text-sm text-surface-600 mb-3">Does not auto-update — run <code class="bg-surface-200 px-1.5 py-0.5 rounded text-xs">brew upgrade claude-code</code> periodically.</p>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code>brew install --cask claude-code</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+              <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+              <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <span class="ml-5">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linux -->
+      <div id="tab-linux" class="tab-content rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="step-card rounded-xl border border-surface-100 bg-surface-50 p-5">
+          <h4 class="font-semibold text-surface-900 mb-1">Native Install <span class="text-xs text-green-700 bg-green-100 rounded-full px-2 py-0.5 ml-1">Recommended</span></h4>
+          <p class="text-sm text-surface-600 mb-3">Works on most Linux distributions and WSL. Open your terminal and run:</p>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+              <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+              <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <span class="ml-5">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Windows -->
+      <div id="tab-windows" class="tab-content rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="rounded-xl bg-blue-50 border border-blue-200 p-4 flex gap-3 mb-2">
+          <span class="text-blue-600 text-lg shrink-0">&#9432;</span>
+          <p class="text-sm text-blue-800"><strong>Prerequisite:</strong> Install <a href="https://git-scm.com/downloads/win" class="underline font-medium" target="_blank">Git for Windows</a> first. Accept all defaults during installation.</p>
+        </div>
+        <div class="step-card rounded-xl border border-surface-100 bg-surface-50 p-5">
+          <h4 class="font-semibold text-surface-900 mb-1">Option A &mdash; PowerShell <span class="text-xs text-green-700 bg-green-100 rounded-full px-2 py-0.5 ml-1">Recommended</span></h4>
+          <p class="text-sm text-surface-600 mb-3">Open <strong>PowerShell</strong> and run:</p>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code>irm https://claude.ai/install.ps1 | iex</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+              <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+              <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <span class="ml-5">Copy</span>
+            </button>
+          </div>
+        </div>
+        <div class="step-card rounded-xl border border-surface-100 bg-surface-50 p-5">
+          <h4 class="font-semibold text-surface-900 mb-1">Option B &mdash; Command Prompt (CMD)</h4>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code>curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+              <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+              <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <span class="ml-5">Copy</span>
+            </button>
+          </div>
+        </div>
+        <div class="step-card rounded-xl border border-surface-100 bg-surface-50 p-5">
+          <h4 class="font-semibold text-surface-900 mb-1">Option C &mdash; WinGet</h4>
+          <p class="text-sm text-surface-600 mb-3">Does not auto-update — run <code class="bg-surface-200 px-1.5 py-0.5 rounded text-xs">winget upgrade Anthropic.ClaudeCode</code> periodically.</p>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code>winget install Anthropic.ClaudeCode</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+              <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+              <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <span class="ml-5">Copy</span>
+            </button>
+          </div>
+        </div>
+        <div class="step-card rounded-xl border border-surface-100 bg-surface-50 p-5">
+          <h4 class="font-semibold text-surface-900 mb-1">Option D &mdash; WSL</h4>
+          <p class="text-sm text-surface-600">If you have WSL set up, open your WSL terminal and use the <strong>Linux</strong> install command above.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── CONFIGURE ───────── -->
+    <section id="configure">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">4</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="config.title">Configure Environment Variables</h2>
+      </div>
+      <p class="text-surface-600 mb-6" data-i18n="config.desc">Tell Claude Code to route requests through OpenRouter by setting these environment variables.</p>
+
+      <!-- Config OS Tabs -->
+      <div class="no-print flex border-b border-surface-200 mb-0 gap-1" role="tablist">
+        <button onclick="switchConfigTab('cfg-unix')" class="cfg-tab-btn active rounded-t-lg border border-b-0 border-surface-200 px-5 py-2.5 text-sm font-semibold transition" data-tab="cfg-unix">macOS / Linux / WSL</button>
+        <button onclick="switchConfigTab('cfg-win')" class="cfg-tab-btn rounded-t-lg border border-b-0 border-transparent px-5 py-2.5 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-tab="cfg-win">Windows</button>
+      </div>
+
+      <!-- Unix config -->
+      <div id="tab-cfg-unix" class="cfg-tab-content active rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-5">
+        <p class="text-sm text-surface-600"><strong>Step 1:</strong> Open your shell profile in a text editor.</p>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div>
+            <p class="text-xs font-medium text-surface-500 mb-1">Zsh (default on macOS)</p>
+            <div class="code-block" onclick="copyFromBlock(this)">
+              <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>nano ~/.zshrc</code></pre>
+              <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+                <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+                <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span class="ml-5">Copy</span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-surface-500 mb-1">Bash (default on most Linux)</p>
+            <div class="code-block" onclick="copyFromBlock(this)">
+              <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>nano ~/.bashrc</code></pre>
+              <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+                <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+                <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span class="ml-5">Copy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-sm text-surface-600"><strong>Step 2:</strong> Add these lines at the bottom of the file. <span class="text-red-600 font-medium">Replace the placeholder with your actual key.</span></p>
+        <div class="code-block" onclick="copyFromBlock(this)">
+          <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code># Claude Code — OpenRouter Configuration
+export OPENROUTER_API_KEY="sk-or-v1-YOUR_KEY_HERE"
+export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
+export ANTHROPIC_AUTH_TOKEN="$OPENROUTER_API_KEY"
+export ANTHROPIC_API_KEY=""</code></pre>
+          <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+            <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+            <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            <span class="ml-5">Copy</span>
+          </button>
+        </div>
+
+        <p class="text-sm text-surface-600"><strong>Step 3:</strong> Save the file (in nano: <kbd class="bg-surface-200 rounded px-1.5 py-0.5 text-xs font-mono">Ctrl+O</kbd> &rarr; <kbd class="bg-surface-200 rounded px-1.5 py-0.5 text-xs font-mono">Enter</kbd> &rarr; <kbd class="bg-surface-200 rounded px-1.5 py-0.5 text-xs font-mono">Ctrl+X</kbd>).</p>
+
+        <p class="text-sm text-surface-600"><strong>Step 4:</strong> Reload your profile:</p>
+        <div class="code-block" onclick="copyFromBlock(this)">
+          <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>source ~/.zshrc    # or: source ~/.bashrc</code></pre>
+          <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+            <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+            <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            <span class="ml-5">Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Windows config -->
+      <div id="tab-cfg-win" class="cfg-tab-content rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-5">
+        <h4 class="font-semibold text-surface-900">Option A &mdash; PowerShell Commands <span class="text-xs text-green-700 bg-green-100 rounded-full px-2 py-0.5 ml-1">Recommended</span></h4>
+        <p class="text-sm text-surface-600">Run these in PowerShell. <span class="text-red-600 font-medium">Replace the placeholder with your actual key.</span></p>
+        <div class="code-block" onclick="copyFromBlock(this)">
+          <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code>[Environment]::SetEnvironmentVariable("OPENROUTER_API_KEY", "sk-or-v1-YOUR_KEY_HERE", "User")
+[Environment]::SetEnvironmentVariable("ANTHROPIC_BASE_URL", "https://openrouter.ai/api", "User")
+[Environment]::SetEnvironmentVariable("ANTHROPIC_AUTH_TOKEN", "sk-or-v1-YOUR_KEY_HERE", "User")
+[Environment]::SetEnvironmentVariable("ANTHROPIC_API_KEY", "", "User")</code></pre>
+          <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+            <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+            <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            <span class="ml-5">Copy</span>
+          </button>
+        </div>
+        <p class="text-sm text-surface-500">After running, <strong>close and reopen PowerShell</strong>.</p>
+
+        <hr class="border-surface-200" />
+
+        <h4 class="font-semibold text-surface-900">Option B &mdash; System Environment Variables (GUI)</h4>
+        <ol class="text-sm text-surface-600 space-y-2 list-decimal list-inside">
+          <li>Press <kbd class="bg-surface-200 rounded px-1.5 py-0.5 text-xs font-mono">Win+R</kbd>, type <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">sysdm.cpl</code>, press Enter.</li>
+          <li>Go to <strong>Advanced</strong> tab &rarr; <strong>Environment Variables</strong>.</li>
+          <li>Under <strong>User variables</strong>, click <strong>New</strong> and add each:</li>
+        </ol>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border border-surface-200 rounded-lg overflow-hidden">
+            <thead class="bg-surface-100">
+              <tr>
+                <th class="text-left px-4 py-2 font-semibold text-surface-700">Variable Name</th>
+                <th class="text-left px-4 py-2 font-semibold text-surface-700">Value</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-100">
+              <tr><td class="px-4 py-2 font-mono text-xs">OPENROUTER_API_KEY</td><td class="px-4 py-2 font-mono text-xs">sk-or-v1-YOUR_KEY_HERE</td></tr>
+              <tr><td class="px-4 py-2 font-mono text-xs">ANTHROPIC_BASE_URL</td><td class="px-4 py-2 font-mono text-xs">https://openrouter.ai/api</td></tr>
+              <tr><td class="px-4 py-2 font-mono text-xs">ANTHROPIC_AUTH_TOKEN</td><td class="px-4 py-2 font-mono text-xs">sk-or-v1-YOUR_KEY_HERE</td></tr>
+              <tr><td class="px-4 py-2 font-mono text-xs">ANTHROPIC_API_KEY</td><td class="px-4 py-2 font-mono text-xs italic text-surface-400">(leave empty)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-sm text-surface-500">Click <strong>OK</strong> to save, then close and reopen your terminal.</p>
+      </div>
+
+      <div class="mt-4 rounded-xl bg-red-50 border border-red-200 p-4 flex gap-3">
+        <span class="text-red-500 text-xl shrink-0">&#9888;</span>
+        <div class="text-sm text-red-800">
+          <strong>Important:</strong> Do <em>not</em> put these variables in a <code class="bg-red-100 px-1 rounded">.env</code> file in your project. The native Claude Code installer does <strong>not</strong> read <code>.env</code> files. They must be in your shell profile or set as system-level environment variables.
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── VERIFY ───────── -->
+    <section id="verify">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">5</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="verify.title">Launch &amp; Verify</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-5">
+        <div class="flex gap-4 items-start">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">1</span>
+          <div>
+            <p class="font-medium text-surface-900">Open a <strong>new</strong> terminal window</p>
+            <p class="text-sm text-surface-500">Old windows won't have the new environment variables.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">2</span>
+          <div class="min-w-0 flex-1">
+            <p class="font-medium text-surface-900">Navigate to any project folder and launch Claude Code:</p>
+            <div class="code-block mt-2" onclick="copyFromBlock(this)">
+              <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>cd your-project-folder
+claude</code></pre>
+              <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+                <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+                <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span class="ml-5">Copy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">3</span>
+          <div class="min-w-0 flex-1">
+            <p class="font-medium text-surface-900">If you were previously logged in to Anthropic, log out first:</p>
+            <div class="code-block mt-2" onclick="copyFromBlock(this)">
+              <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>/logout</code></pre>
+              <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+                <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+                <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span class="ml-5">Copy</span>
+              </button>
+            </div>
+            <p class="text-sm text-surface-500 mt-1">This clears cached Anthropic credentials so OpenRouter takes over.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">4</span>
+          <div class="min-w-0 flex-1">
+            <p class="font-medium text-surface-900">Verify the connection:</p>
+            <div class="code-block mt-2" onclick="copyFromBlock(this)">
+              <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>/status</code></pre>
+              <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+                <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+                <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span class="ml-5">Copy</span>
+              </button>
+            </div>
+            <p class="text-sm text-surface-500 mt-1">You should see confirmation that your connection is active and routed through OpenRouter.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">5</span>
+          <div class="min-w-0 flex-1">
+            <p class="font-medium text-surface-900">Try a test prompt:</p>
+            <div class="code-block mt-2" onclick="copyFromBlock(this)">
+              <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>What files are in this directory?</code></pre>
+              <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+                <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+                <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span class="ml-5">Copy</span>
+              </button>
+            </div>
+            <p class="text-sm text-surface-500 mt-1">If Claude responds with a file listing — you're all set!</p>
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-green-50 border border-green-200 p-4 flex gap-3 mt-4">
+          <span class="text-green-600 text-xl shrink-0">&#10003;</span>
+          <p class="text-sm text-green-800"><strong>Success!</strong> Claude Code is now connected through OpenRouter. You can start using it for coding tasks.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── TROUBLESHOOTING ───────── -->
+    <section id="troubleshooting">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">6</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="trouble.title">Troubleshooting</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm divide-y divide-surface-100 overflow-hidden">
+
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="trouble.auth">"Authentication failed" or "Invalid API key"</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600 space-y-2">
+            <ul class="list-disc list-inside space-y-1">
+              <li>Double-check your <code class="bg-surface-100 px-1 rounded">OPENROUTER_API_KEY</code> starts with <code class="bg-surface-100 px-1 rounded">sk-or-v1-</code>.</li>
+              <li>Make sure you opened a <strong>new</strong> terminal window after setting variables.</li>
+              <li>Run <code class="bg-surface-100 px-1 rounded">/logout</code> inside Claude Code to clear old Anthropic credentials.</li>
+              <li>Ensure <code class="bg-surface-100 px-1 rounded">ANTHROPIC_API_KEY</code> is set to an empty string (<code class="bg-surface-100 px-1 rounded">""</code>), not left unset.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="trouble.credits">"Insufficient credits" or rate limit errors</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600 space-y-2">
+            <ul class="list-disc list-inside space-y-1">
+              <li>Add credits at <a href="https://openrouter.ai/credits" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/credits</a>.</li>
+              <li>Check your usage at <a href="https://openrouter.ai/activity" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/activity</a>.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="trouble.notfound">"claude" command not found</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600 space-y-2">
+            <ul class="list-disc list-inside space-y-1">
+              <li>Close and reopen your terminal after installation.</li>
+              <li>On Windows, ensure <a href="https://git-scm.com/downloads/win" class="text-brand-600 hover:underline" target="_blank">Git for Windows</a> is installed.</li>
+              <li>Try reinstalling with the native installer.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="trouble.env">Environment variables not being picked up</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600 space-y-2">
+            <ul class="list-disc list-inside space-y-1">
+              <li>Do <strong>not</strong> put variables in a <code class="bg-surface-100 px-1 rounded">.env</code> file — the native installer ignores them.</li>
+              <li>Variables must be in your shell profile (<code class="bg-surface-100 px-1 rounded">~/.zshrc</code> or <code class="bg-surface-100 px-1 rounded">~/.bashrc</code>) or system environment variables.</li>
+              <li>Verify: <code class="bg-surface-100 px-1 rounded">echo $ANTHROPIC_BASE_URL</code> (macOS/Linux) or <code class="bg-surface-100 px-1 rounded">echo %ANTHROPIC_BASE_URL%</code> (Windows CMD).</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="trouble.proxy">Behind a corporate proxy</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600 space-y-2">
+            <p>Add your proxy to your shell profile:</p>
+            <div class="code-block" onclick="copyFromBlock(this)">
+              <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>export HTTPS_PROXY="https://your-proxy:port"</code></pre>
+              <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard">
+                <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+                <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span class="ml-5">Copy</span>
+              </button>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- ───────── DEPARTMENT CLI TOOLS ───────── -->
+    <section id="dept-tools">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">7</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="dept.title">Department CLI Tools</h2>
+      </div>
+      <p class="text-surface-600 mb-6" data-i18n="dept.desc">Curated command-line tools for each SEI Robotics department. Click any command to copy it.</p>
+
+      <!-- Department Tabs -->
+      <div class="no-print flex flex-wrap border-b border-surface-200 mb-0 gap-1" role="tablist">
+        <button onclick="switchDeptTab('android')" class="dept-tab-btn active rounded-t-lg border border-b-0 border-surface-200 px-4 py-2 text-sm font-semibold transition" data-dept-tab="android" data-i18n="dept.tab.android">Android Source</button>
+        <button onclick="switchDeptTab('apk')" class="dept-tab-btn rounded-t-lg border border-b-0 border-transparent px-4 py-2 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-dept-tab="apk" data-i18n="dept.tab.apk">APK Tools</button>
+        <button onclick="switchDeptTab('embedded')" class="dept-tab-btn rounded-t-lg border border-b-0 border-transparent px-4 py-2 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-dept-tab="embedded" data-i18n="dept.tab.embedded">Embedded Linux</button>
+        <button onclick="switchDeptTab('smart')" class="dept-tab-btn rounded-t-lg border border-b-0 border-transparent px-4 py-2 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-dept-tab="smart" data-i18n="dept.tab.smart">Smart Devices</button>
+        <button onclick="switchDeptTab('cloud')" class="dept-tab-btn rounded-t-lg border border-b-0 border-transparent px-4 py-2 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-dept-tab="cloud" data-i18n="dept.tab.cloud">Cloud Engineering</button>
+      </div>
+
+      <div id="dept-tools-container" class="rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8">
+        <!-- Tool cards rendered dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- ───────── AI TOOL RECOMMENDATIONS ───────── -->
+    <section id="ai-assistant">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">8</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="ai.title">AI Tool Recommendations</h2>
+      </div>
+      <p class="text-surface-600 mb-6" data-i18n="ai.desc">Ask our AI assistant for personalized CLI tool recommendations based on your role and workflow.</p>
+
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden">
+        <!-- API Key Input -->
+        <div class="p-5 border-b border-surface-100 bg-surface-50">
+          <label class="block text-sm font-semibold text-surface-700 mb-2" data-i18n="ai.key.label">OpenRouter API Key</label>
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <input id="qwen-api-key" type="password" placeholder="sk-or-..." class="w-full rounded-lg border border-surface-300 px-3 py-2 pr-10 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" data-i18n-placeholder="ai.key.placeholder" />
+              <button onclick="toggleKeyVisibility()" class="absolute right-2 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600 p-1" title="Toggle visibility">
+                <svg id="key-eye-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
+          </div>
+          <p class="text-xs text-surface-400 mt-1.5" data-i18n="ai.key.privacy">Your key is only used in your browser and sent directly to OpenRouter. It is never stored or sent anywhere else.</p>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="qwen-messages" class="qwen-messages p-5 space-y-4 min-h-[120px]">
+          <div class="qwen-ai-msg p-3 text-sm">
+            <p data-i18n="ai.welcome">Hello! I'm your SEI Robotics AI assistant. Tell me your department and what you're working on, and I'll recommend the best CLI tools for your workflow.</p>
+          </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-4 border-t border-surface-100 bg-surface-50">
+          <div class="flex gap-2">
+            <input id="qwen-input" type="text" placeholder="e.g., I work on Android TV firmware..." class="flex-1 rounded-lg border border-surface-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500" data-i18n-placeholder="ai.input.placeholder" onkeydown="if(event.key==='Enter')sendQwenMessage()" />
+            <button onclick="sendQwenMessage()" class="rounded-lg bg-brand-600 hover:bg-brand-500 text-white px-4 py-2 text-sm font-semibold transition shrink-0" data-i18n="ai.send">Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── QUICK REFERENCE ───────── -->
+    <section id="quick-ref">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">&#9733;</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="qref.title">Quick Reference</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-100">
+              <tr>
+                <th class="text-left px-5 py-3 font-semibold text-surface-700">What</th>
+                <th class="text-left px-5 py-3 font-semibold text-surface-700">Command / Link</th>
+                <th class="w-16 px-3 py-3"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-100">
+              <tr class="qr-row hover:bg-surface-50 transition">
+                <td class="px-5 py-3 text-surface-600">Install (macOS / Linux)</td>
+                <td class="px-5 py-3 font-mono text-xs text-surface-800">curl -fsSL https://claude.ai/install.sh | bash</td>
+                <td class="px-3 py-3 text-center"><button onclick="copyText('curl -fsSL https://claude.ai/install.sh | bash', this)" class="qr-copy inline-flex items-center gap-1 text-surface-400 hover:text-brand-600 text-xs font-medium px-2 py-1 rounded hover:bg-brand-50" title="Copy command"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>Copy</button></td>
+              </tr>
+              <tr class="qr-row hover:bg-surface-50 transition">
+                <td class="px-5 py-3 text-surface-600">Install (Windows PS)</td>
+                <td class="px-5 py-3 font-mono text-xs text-surface-800">irm https://claude.ai/install.ps1 | iex</td>
+                <td class="px-3 py-3 text-center"><button onclick="copyText('irm https://claude.ai/install.ps1 | iex', this)" class="qr-copy inline-flex items-center gap-1 text-surface-400 hover:text-brand-600 text-xs font-medium px-2 py-1 rounded hover:bg-brand-50" title="Copy command"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>Copy</button></td>
+              </tr>
+              <tr class="qr-row hover:bg-surface-50 transition">
+                <td class="px-5 py-3 text-surface-600">Install (Homebrew)</td>
+                <td class="px-5 py-3 font-mono text-xs text-surface-800">brew install --cask claude-code</td>
+                <td class="px-3 py-3 text-center"><button onclick="copyText('brew install --cask claude-code', this)" class="qr-copy inline-flex items-center gap-1 text-surface-400 hover:text-brand-600 text-xs font-medium px-2 py-1 rounded hover:bg-brand-50" title="Copy command"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>Copy</button></td>
+              </tr>
+              <tr class="qr-row hover:bg-surface-50 transition">
+                <td class="px-5 py-3 text-surface-600">Install (WinGet)</td>
+                <td class="px-5 py-3 font-mono text-xs text-surface-800">winget install Anthropic.ClaudeCode</td>
+                <td class="px-3 py-3 text-center"><button onclick="copyText('winget install Anthropic.ClaudeCode', this)" class="qr-copy inline-flex items-center gap-1 text-surface-400 hover:text-brand-600 text-xs font-medium px-2 py-1 rounded hover:bg-brand-50" title="Copy command"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>Copy</button></td>
+              </tr>
+              <tr class="qr-row hover:bg-surface-50 transition">
+                <td class="px-5 py-3 text-surface-600">Launch</td>
+                <td class="px-5 py-3 font-mono text-xs text-surface-800">claude</td>
+                <td class="px-3 py-3 text-center"><button onclick="copyText('claude', this)" class="qr-copy inline-flex items-center gap-1 text-surface-400 hover:text-brand-600 text-xs font-medium px-2 py-1 rounded hover:bg-brand-50" title="Copy command"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>Copy</button></td>
+              </tr>
+              <tr class="qr-row hover:bg-surface-50 transition">
+                <td class="px-5 py-3 text-surface-600">Check status</td>
+                <td class="px-5 py-3 font-mono text-xs text-surface-800">/status</td>
+                <td class="px-3 py-3 text-center"><button onclick="copyText('/status', this)" class="qr-copy inline-flex items-center gap-1 text-surface-400 hover:text-brand-600 text-xs font-medium px-2 py-1 rounded hover:bg-brand-50" title="Copy command"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>Copy</button></td>
+              </tr>
+              <tr class="qr-row hover:bg-surface-50 transition">
+                <td class="px-5 py-3 text-surface-600">Log out</td>
+                <td class="px-5 py-3 font-mono text-xs text-surface-800">/logout</td>
+                <td class="px-3 py-3 text-center"><button onclick="copyText('/logout', this)" class="qr-copy inline-flex items-center gap-1 text-surface-400 hover:text-brand-600 text-xs font-medium px-2 py-1 rounded hover:bg-brand-50" title="Copy command"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>Copy</button></td>
+              </tr>
+              <tr class="hover:bg-surface-50 transition"><td class="px-5 py-3 text-surface-600">OpenRouter keys</td><td class="px-5 py-3" colspan="2"><a href="https://openrouter.ai/settings/keys" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/settings/keys</a></td></tr>
+              <tr class="hover:bg-surface-50 transition"><td class="px-5 py-3 text-surface-600">OpenRouter credits</td><td class="px-5 py-3" colspan="2"><a href="https://openrouter.ai/credits" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/credits</a></td></tr>
+              <tr class="hover:bg-surface-50 transition"><td class="px-5 py-3 text-surface-600">Usage dashboard</td><td class="px-5 py-3" colspan="2"><a href="https://openrouter.ai/activity" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/activity</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── TIPS ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">&#9881;</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="tips.title">Tips &amp; Best Practices</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <h4 class="font-semibold text-surface-900 mb-1" data-i18n="tips.cost">Monitor Costs</h4>
+          <p class="text-sm text-surface-600" data-i18n-html="tips.cost.desc">Check <a href="https://openrouter.ai/activity" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/activity</a> regularly. Set spending limits in your account settings.</p>
+        </div>
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <h4 class="font-semibold text-surface-900 mb-1" data-i18n="tips.update">Stay Updated</h4>
+          <p class="text-sm text-surface-600" data-i18n="tips.update.desc">Native installs auto-update. Homebrew/WinGet users: upgrade manually.</p>
+        </div>
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <h4 class="font-semibold text-surface-900 mb-1" data-i18n="tips.failover">Provider Failover</h4>
+          <p class="text-sm text-surface-600" data-i18n="tips.failover.desc">OpenRouter routes between multiple Anthropic providers for high availability.</p>
+        </div>
+        <div class="rounded-xl border border-surface-200 bg-white p-5 shadow-sm">
+          <h4 class="font-semibold text-surface-900 mb-1" data-i18n="tips.keys">Never Commit Keys</h4>
+          <p class="text-sm text-surface-600" data-i18n="tips.keys.desc">Keep your API key out of code, git repos, and shared documents. Use env vars only.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ───────── FOOTER ───────── -->
+  <footer class="border-t border-surface-200 bg-white mt-16">
+    <div class="max-w-5xl mx-auto px-6 py-8 text-center text-sm text-surface-500">
+      <p data-i18n="footer.updated">Last updated: March 2026 &middot; Internal use only</p>
+      <p class="mt-2">
+        <a href="https://code.claude.com/docs/en/overview" class="text-brand-600 hover:underline" target="_blank">Claude Code Docs</a>
+        &middot;
+        <a href="https://openrouter.ai/docs" class="text-brand-600 hover:underline" target="_blank">OpenRouter Docs</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ───────── COPY TOAST ───────── -->
+  <div id="copy-toast" class="copy-toast no-print">
+    <div class="flex items-center gap-2 bg-surface-900 text-white text-sm font-medium px-4 py-2.5 rounded-lg shadow-xl">
+      <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      <span data-i18n="copy.toast">Copied to clipboard</span>
+    </div>
+  </div>
+
+  <!-- ───────── STICKY LANG TOGGLE ───────── -->
+  <button id="lang-sticky" onclick="toggleLanguage()" class="lang-sticky no-print bg-white border border-surface-200 shadow-lg hover:shadow-xl text-surface-700 hover:text-brand-600 rounded-full px-3 py-1.5 text-sm font-medium transition flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+    <span id="lang-sticky-label">EN | 中文</span>
+  </button>
+
+  <!-- ───────── BACK TO TOP ───────── -->
+  <button id="back-to-top" onclick="window.scrollTo({top:0})" class="back-to-top no-print bg-white border border-surface-200 shadow-lg hover:shadow-xl text-surface-600 hover:text-brand-600 rounded-full w-11 h-11 flex items-center justify-center transition" title="Back to top" aria-label="Back to top">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+  </button>
+
+  <!-- ───────── SCRIPTS ───────── -->
+  <script>
+    // ===================== i18n System =====================
+    let currentLang = localStorage.getItem('sei-lang') || 'en';
+
+    const i18n = {
+      en: {
+        'hero.badge': 'Internal Staff Guide',
+        'hero.subtitle': 'Setup Guide',
+        'hero.desc': 'Install Claude Code and connect it to <strong class="text-white">OpenRouter</strong> for AI-powered coding assistance. Follow the steps below for your operating system.',
+        'hero.cta1': 'Get Started',
+        'hero.cta2': 'Quick Reference',
+        'toc.title': 'Table of Contents',
+        'toc.1': 'Prerequisites',
+        'toc.2': 'Create an OpenRouter API Key',
+        'toc.3': 'Install Claude Code',
+        'toc.4': 'Configure Environment Variables',
+        'toc.5': 'Launch & Verify',
+        'toc.6': 'Troubleshooting',
+        'toc.7': 'Department CLI Tools',
+        'toc.8': 'AI Tool Recommendations',
+        'prereq.title': 'Prerequisites',
+        'prereq.internet': 'Internet',
+        'prereq.internet.desc': 'Required for installation and API calls.',
+        'prereq.terminal': 'Terminal',
+        'prereq.terminal.desc': 'macOS Terminal, Linux shell, or Windows PowerShell / CMD.',
+        'prereq.account': 'OpenRouter Account',
+        'prereq.account.desc': 'Free sign-up at <a href="https://openrouter.ai" class="text-brand-600 hover:underline" target="_blank">openrouter.ai</a>.',
+        'prereq.git': 'Git <span class="text-xs text-surface-400">(Windows only)</span>',
+        'prereq.git.desc': 'Install <a href="https://git-scm.com/downloads/win" class="text-brand-600 hover:underline" target="_blank">Git for Windows</a> before proceeding.',
+        'key.title': 'Create an OpenRouter API Key',
+        'key.step1': 'Go to <a href="https://openrouter.ai" class="text-brand-600 hover:underline" target="_blank">openrouter.ai</a> and click <strong>Sign Up</strong>.',
+        'key.step1.note': 'You can sign up with Google, GitHub, or email.',
+        'key.step2': 'Navigate to <a href="https://openrouter.ai/settings/keys" class="text-brand-600 hover:underline" target="_blank">Settings &rarr; Keys</a>.',
+        'key.step3': 'Click <strong>"Create Key"</strong>.',
+        'key.step3.note': 'Give it a descriptive name, e.g., <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">claude-code-work</code>.',
+        'key.step4': 'Copy your API key immediately.',
+        'key.step4.note': 'It starts with <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">sk-or-v1-</code> and is <strong>only shown once</strong>. Store it in a password manager.',
+        'key.step5': '(Optional) Add credits at <a href="https://openrouter.ai/credits" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/credits</a>.',
+        'key.step5.note': 'Credits are required to make API calls. Usage is pay-as-you-go.',
+        'key.security': '<strong>Security reminder:</strong> Treat your API key like a password. Never share it, commit it to git, or paste it in Slack/Teams/email.',
+        'install.title': 'Install Claude Code',
+        'config.title': 'Configure Environment Variables',
+        'config.desc': 'Tell Claude Code to route requests through OpenRouter by setting these environment variables.',
+        'verify.title': 'Launch & Verify',
+        'trouble.title': 'Troubleshooting',
+        'trouble.auth': '"Authentication failed" or "Invalid API key"',
+        'trouble.credits': '"Insufficient credits" or rate limit errors',
+        'trouble.notfound': '"claude" command not found',
+        'trouble.env': 'Environment variables not being picked up',
+        'trouble.proxy': 'Behind a corporate proxy',
+        'dept.title': 'Department CLI Tools',
+        'dept.desc': 'Curated command-line tools for each SEI Robotics department. Click any command to copy it.',
+        'dept.tab.android': 'Android Source',
+        'dept.tab.apk': 'APK Tools',
+        'dept.tab.embedded': 'Embedded Linux',
+        'dept.tab.smart': 'Smart Devices',
+        'dept.tab.cloud': 'Cloud Engineering',
+        'ai.title': 'AI Tool Recommendations',
+        'ai.desc': 'Ask our AI assistant for personalized CLI tool recommendations based on your role and workflow.',
+        'ai.key.label': 'OpenRouter API Key',
+        'ai.key.placeholder': 'sk-or-...',
+        'ai.key.privacy': 'Your key is only used in your browser and sent directly to OpenRouter. It is never stored or sent anywhere else.',
+        'ai.welcome': "Hello! I'm your SEI Robotics AI assistant. Tell me your department and what you're working on, and I'll recommend the best CLI tools for your workflow.",
+        'ai.input.placeholder': 'e.g., I work on Android TV firmware...',
+        'ai.send': 'Send',
+        'qref.title': 'Quick Reference',
+        'tips.title': 'Tips & Best Practices',
+        'tips.cost': 'Monitor Costs',
+        'tips.cost.desc': 'Check <a href="https://openrouter.ai/activity" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/activity</a> regularly. Set spending limits in your account settings.',
+        'tips.update': 'Stay Updated',
+        'tips.update.desc': 'Native installs auto-update. Homebrew/WinGet users: upgrade manually.',
+        'tips.failover': 'Provider Failover',
+        'tips.failover.desc': 'OpenRouter routes between multiple Anthropic providers for high availability.',
+        'tips.keys': 'Never Commit Keys',
+        'tips.keys.desc': 'Keep your API key out of code, git repos, and shared documents. Use env vars only.',
+        'footer.updated': 'Last updated: March 2026 \u00b7 Internal use only',
+        'copy.toast': 'Copied to clipboard',
+        'copy.btn': 'Copy',
+        'copy.copied': 'Copied!',
+        'lang.label': 'EN | \u4e2d\u6587',
+        'ai.error.key': 'Please enter your OpenRouter API key (starts with sk-or-).',
+        'ai.error.empty': 'Please type a message.',
+        'ai.error.network': 'Network error. Please check your connection and try again.',
+        'ai.error.auth': 'Invalid API key. Please check your OpenRouter key.',
+        'ai.error.rate': 'Rate limited. Please wait a moment and try again.',
+      },
+      zh: {
+        'hero.badge': '\u5185\u90e8\u5458\u5de5\u6307\u5357',
+        'hero.subtitle': '\u8bbe\u7f6e\u6307\u5357',
+        'hero.desc': '\u5b89\u88c5 Claude Code \u5e76\u901a\u8fc7 <strong class="text-white">OpenRouter</strong> \u8fde\u63a5\uff0c\u83b7\u53d6 AI \u7f16\u7801\u52a9\u624b\u3002\u8bf7\u6309\u7167\u4ee5\u4e0b\u6b65\u9aa4\u64cd\u4f5c\u3002',
+        'hero.cta1': '\u5f00\u59cb\u4f7f\u7528',
+        'hero.cta2': '\u5feb\u901f\u53c2\u8003',
+        'toc.title': '\u76ee\u5f55',
+        'toc.1': '\u524d\u7f6e\u6761\u4ef6',
+        'toc.2': '\u521b\u5efa OpenRouter API \u5bc6\u94a5',
+        'toc.3': '\u5b89\u88c5 Claude Code',
+        'toc.4': '\u914d\u7f6e\u73af\u5883\u53d8\u91cf',
+        'toc.5': '\u542f\u52a8\u548c\u9a8c\u8bc1',
+        'toc.6': '\u6545\u969c\u6392\u9664',
+        'toc.7': '\u90e8\u95e8 CLI \u5de5\u5177',
+        'toc.8': 'AI \u5de5\u5177\u63a8\u8350',
+        'prereq.title': '\u524d\u7f6e\u6761\u4ef6',
+        'prereq.internet': '\u7f51\u7edc',
+        'prereq.internet.desc': '\u5b89\u88c5\u548c API \u8c03\u7528\u9700\u8981\u7f51\u7edc\u8fde\u63a5\u3002',
+        'prereq.terminal': '\u7ec8\u7aef',
+        'prereq.terminal.desc': 'macOS \u7ec8\u7aef\u3001Linux shell \u6216 Windows PowerShell / CMD\u3002',
+        'prereq.account': 'OpenRouter \u8d26\u6237',
+        'prereq.account.desc': '\u5728 <a href="https://openrouter.ai" class="text-brand-600 hover:underline" target="_blank">openrouter.ai</a> \u514d\u8d39\u6ce8\u518c\u3002',
+        'prereq.git': 'Git <span class="text-xs text-surface-400">\uff08\u4ec5 Windows\uff09</span>',
+        'prereq.git.desc': '\u8bf7\u5148\u5b89\u88c5 <a href="https://git-scm.com/downloads/win" class="text-brand-600 hover:underline" target="_blank">Git for Windows</a>\u3002',
+        'key.title': '\u521b\u5efa OpenRouter API \u5bc6\u94a5',
+        'key.step1': '\u8bbf\u95ee <a href="https://openrouter.ai" class="text-brand-600 hover:underline" target="_blank">openrouter.ai</a> \u5e76\u70b9\u51fb <strong>\u6ce8\u518c</strong>\u3002',
+        'key.step1.note': '\u53ef\u4ee5\u4f7f\u7528 Google\u3001GitHub \u6216\u7535\u5b50\u90ae\u4ef6\u6ce8\u518c\u3002',
+        'key.step2': '\u5bfc\u822a\u5230 <a href="https://openrouter.ai/settings/keys" class="text-brand-600 hover:underline" target="_blank">\u8bbe\u7f6e &rarr; \u5bc6\u94a5</a>\u3002',
+        'key.step3': '\u70b9\u51fb <strong>"\u521b\u5efa\u5bc6\u94a5"</strong>\u3002',
+        'key.step3.note': '\u7ed9\u5b83\u4e00\u4e2a\u63cf\u8ff0\u6027\u540d\u79f0\uff0c\u4f8b\u5982 <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">claude-code-work</code>\u3002',
+        'key.step4': '\u7acb\u5373\u590d\u5236\u60a8\u7684 API \u5bc6\u94a5\u3002',
+        'key.step4.note': '\u5b83\u4ee5 <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">sk-or-v1-</code> \u5f00\u5934\uff0c<strong>\u53ea\u663e\u793a\u4e00\u6b21</strong>\u3002\u8bf7\u4fdd\u5b58\u5230\u5bc6\u7801\u7ba1\u7406\u5668\u4e2d\u3002',
+        'key.step5': '\uff08\u53ef\u9009\uff09\u5728 <a href="https://openrouter.ai/credits" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/credits</a> \u5145\u503c\u3002',
+        'key.step5.note': '\u4f7f\u7528 API \u9700\u8981\u5145\u503c\u3002\u6309\u7528\u91cf\u4ed8\u8d39\u3002',
+        'key.security': '<strong>\u5b89\u5168\u63d0\u9192\uff1a</strong>\u8bf7\u50cf\u5bf9\u5f85\u5bc6\u7801\u4e00\u6837\u5bf9\u5f85 API \u5bc6\u94a5\u3002\u5207\u52ff\u5206\u4eab\u3001\u63d0\u4ea4\u5230 git \u6216\u7c98\u8d34\u5230 Slack/Teams/\u90ae\u4ef6\u4e2d\u3002',
+        'install.title': '\u5b89\u88c5 Claude Code',
+        'config.title': '\u914d\u7f6e\u73af\u5883\u53d8\u91cf',
+        'config.desc': '\u901a\u8fc7\u8bbe\u7f6e\u8fd9\u4e9b\u73af\u5883\u53d8\u91cf\uff0c\u8ba9 Claude Code \u901a\u8fc7 OpenRouter \u8def\u7531\u8bf7\u6c42\u3002',
+        'verify.title': '\u542f\u52a8\u548c\u9a8c\u8bc1',
+        'trouble.title': '\u6545\u969c\u6392\u9664',
+        'trouble.auth': '"\u8eab\u4efd\u9a8c\u8bc1\u5931\u8d25"\u6216"\u65e0\u6548\u7684 API \u5bc6\u94a5"',
+        'trouble.credits': '"\u4f59\u989d\u4e0d\u8db3"\u6216\u901f\u7387\u9650\u5236\u9519\u8bef',
+        'trouble.notfound': '\u627e\u4e0d\u5230 "claude" \u547d\u4ee4',
+        'trouble.env': '\u73af\u5883\u53d8\u91cf\u672a\u751f\u6548',
+        'trouble.proxy': '\u4f4d\u4e8e\u4f01\u4e1a\u4ee3\u7406\u4e4b\u540e',
+        'dept.title': '\u90e8\u95e8 CLI \u5de5\u5177',
+        'dept.desc': '\u4e3a SEI Robotics \u5404\u90e8\u95e8\u7cbe\u9009\u7684\u547d\u4ee4\u884c\u5de5\u5177\u3002\u70b9\u51fb\u4efb\u4f55\u547d\u4ee4\u5373\u53ef\u590d\u5236\u3002',
+        'dept.tab.android': 'Android \u6e90\u7801',
+        'dept.tab.apk': 'APK \u5de5\u5177',
+        'dept.tab.embedded': '\u5d4c\u5165\u5f0f Linux',
+        'dept.tab.smart': '\u667a\u80fd\u8bbe\u5907',
+        'dept.tab.cloud': '\u4e91\u5de5\u7a0b',
+        'ai.title': 'AI \u5de5\u5177\u63a8\u8350',
+        'ai.desc': '\u5411 AI \u52a9\u624b\u54a8\u8be2\u9488\u5bf9\u60a8\u89d2\u8272\u548c\u5de5\u4f5c\u6d41\u7684\u4e2a\u6027\u5316 CLI \u5de5\u5177\u63a8\u8350\u3002',
+        'ai.key.label': 'OpenRouter API \u5bc6\u94a5',
+        'ai.key.placeholder': 'sk-or-...',
+        'ai.key.privacy': '\u60a8\u7684\u5bc6\u94a5\u4ec5\u5728\u6d4f\u89c8\u5668\u4e2d\u4f7f\u7528\uff0c\u76f4\u63a5\u53d1\u9001\u5230 OpenRouter\u3002\u4e0d\u4f1a\u5b58\u50a8\u6216\u53d1\u9001\u5230\u5176\u4ed6\u4efb\u4f55\u5730\u65b9\u3002',
+        'ai.welcome': '\u60a8\u597d\uff01\u6211\u662f SEI Robotics AI \u52a9\u624b\u3002\u8bf7\u544a\u8bc9\u6211\u60a8\u7684\u90e8\u95e8\u548c\u6b63\u5728\u505a\u7684\u5de5\u4f5c\uff0c\u6211\u4f1a\u63a8\u8350\u6700\u9002\u5408\u60a8\u5de5\u4f5c\u6d41\u7684 CLI \u5de5\u5177\u3002',
+        'ai.input.placeholder': '\u4f8b\u5982\uff1a\u6211\u8d1f\u8d23 Android TV \u56fa\u4ef6\u5f00\u53d1...',
+        'ai.send': '\u53d1\u9001',
+        'qref.title': '\u5feb\u901f\u53c2\u8003',
+        'tips.title': '\u63d0\u793a\u548c\u6700\u4f73\u5b9e\u8df5',
+        'tips.cost': '\u76d1\u63a7\u8d39\u7528',
+        'tips.cost.desc': '\u5b9a\u671f\u67e5\u770b <a href="https://openrouter.ai/activity" class="text-brand-600 hover:underline" target="_blank">openrouter.ai/activity</a>\u3002\u5728\u8d26\u6237\u8bbe\u7f6e\u4e2d\u8bbe\u5b9a\u6d88\u8d39\u9650\u989d\u3002',
+        'tips.update': '\u4fdd\u6301\u66f4\u65b0',
+        'tips.update.desc': '\u539f\u751f\u5b89\u88c5\u81ea\u52a8\u66f4\u65b0\u3002Homebrew/WinGet \u7528\u6237\u9700\u624b\u52a8\u5347\u7ea7\u3002',
+        'tips.failover': '\u63d0\u4f9b\u5546\u6545\u969c\u8f6c\u79fb',
+        'tips.failover.desc': 'OpenRouter \u5728\u591a\u4e2a Anthropic \u63d0\u4f9b\u5546\u4e4b\u95f4\u8def\u7531\uff0c\u786e\u4fdd\u9ad8\u53ef\u7528\u6027\u3002',
+        'tips.keys': '\u5207\u52ff\u63d0\u4ea4\u5bc6\u94a5',
+        'tips.keys.desc': '\u8bf7\u52ff\u5c06 API \u5bc6\u94a5\u653e\u5165\u4ee3\u7801\u3001git \u4ed3\u5e93\u6216\u5171\u4eab\u6587\u6863\u4e2d\u3002\u4ec5\u4f7f\u7528\u73af\u5883\u53d8\u91cf\u3002',
+        'footer.updated': '\u6700\u540e\u66f4\u65b0\uff1a2026\u5e743\u6708 \u00b7 \u4ec5\u4f9b\u5185\u90e8\u4f7f\u7528',
+        'copy.toast': '\u5df2\u590d\u5236\u5230\u526a\u8d34\u677f',
+        'copy.btn': '\u590d\u5236',
+        'copy.copied': '\u5df2\u590d\u5236!',
+        'lang.label': 'EN | \u4e2d\u6587',
+        'ai.error.key': '\u8bf7\u8f93\u5165\u60a8\u7684 OpenRouter API \u5bc6\u94a5\uff08\u4ee5 sk-or- \u5f00\u5934\uff09\u3002',
+        'ai.error.empty': '\u8bf7\u8f93\u5165\u6d88\u606f\u3002',
+        'ai.error.network': '\u7f51\u7edc\u9519\u8bef\u3002\u8bf7\u68c0\u67e5\u8fde\u63a5\u5e76\u91cd\u8bd5\u3002',
+        'ai.error.auth': 'API \u5bc6\u94a5\u65e0\u6548\u3002\u8bf7\u68c0\u67e5\u60a8\u7684 OpenRouter \u5bc6\u94a5\u3002',
+        'ai.error.rate': '\u8bf7\u6c42\u88ab\u9650\u6d41\u3002\u8bf7\u7a0d\u7b49\u7247\u523b\u540e\u91cd\u8bd5\u3002',
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      localStorage.setItem('sei-lang', currentLang);
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+      // Text-only elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[currentLang][key] !== undefined) el.textContent = i18n[currentLang][key];
+      });
+      // HTML elements
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (i18n[currentLang][key] !== undefined) el.innerHTML = i18n[currentLang][key];
+      });
+      // Placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (i18n[currentLang][key] !== undefined) el.placeholder = i18n[currentLang][key];
+      });
+      // Update toggle labels
+      const heroLabel = document.getElementById('lang-hero-label');
+      const stickyLabel = document.getElementById('lang-sticky-label');
+      const label = currentLang === 'en' ? 'EN | \u4e2d\u6587' : '\u4e2d\u6587 | EN';
+      if (heroLabel) heroLabel.textContent = label;
+      if (stickyLabel) stickyLabel.textContent = label;
+      // Re-render department tools for language switch
+      renderDeptTools();
+    }
+
+    // ===================== Tab Switching =====================
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('active');
+        el.classList.add('border-transparent', 'text-surface-500');
+        el.classList.remove('border-surface-200');
+      });
+      document.getElementById('tab-' + tab).classList.add('active');
+      const btn = document.querySelector('.tab-btn[data-tab="' + tab + '"]');
+      btn.classList.add('active');
+      btn.classList.remove('border-transparent', 'text-surface-500');
+      btn.classList.add('border-surface-200');
+    }
+
+    function switchConfigTab(tab) {
+      document.querySelectorAll('.cfg-tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.cfg-tab-btn').forEach(el => {
+        el.classList.remove('active');
+        el.classList.add('border-transparent', 'text-surface-500');
+        el.classList.remove('border-surface-200');
+      });
+      document.getElementById('tab-' + tab).classList.add('active');
+      const btn = document.querySelector('.cfg-tab-btn[data-tab="' + tab + '"]');
+      btn.classList.add('active');
+      btn.classList.remove('border-transparent', 'text-surface-500');
+      btn.classList.add('border-surface-200');
+    }
+
+    // ===================== Department Tools =====================
+    let activeDeptTab = 'android';
+
+    const deptTools = {
+      android: [
+        { name: 'repo', cmd: 'repo init -u <manifest-url> && repo sync -j8', desc: { en: 'Initialize and sync Android source tree', zh: '\u521d\u59cb\u5316\u5e76\u540c\u6b65 Android \u6e90\u7801\u6811' } },
+        { name: 'adb', cmd: 'adb devices', desc: { en: 'List connected Android devices', zh: '\u5217\u51fa\u5df2\u8fde\u63a5\u7684 Android \u8bbe\u5907' } },
+        { name: 'fastboot', cmd: 'fastboot flash system system.img', desc: { en: 'Flash system partition via fastboot', zh: '\u901a\u8fc7 fastboot \u5237\u5199\u7cfb\u7edf\u5206\u533a' } },
+        { name: 'make/lunch', cmd: 'source build/envsetup.sh && lunch <target>', desc: { en: 'Set up Android build environment', zh: '\u8bbe\u7f6e Android \u6784\u5efa\u73af\u5883' } },
+        { name: 'ccache', cmd: 'export USE_CCACHE=1 && ccache -M 50G', desc: { en: 'Enable compiler cache (speeds up rebuilds)', zh: '\u542f\u7528\u7f16\u8bd1\u5668\u7f13\u5b58\uff08\u52a0\u901f\u91cd\u65b0\u6784\u5efa\uff09' } },
+        { name: 'git', cmd: 'git log --oneline -20', desc: { en: 'View recent commit history', zh: '\u67e5\u770b\u6700\u8fd1\u7684\u63d0\u4ea4\u5386\u53f2' } },
+        { name: 'ninja', cmd: 'ninja -j$(nproc)', desc: { en: 'Parallel build with Ninja build system', zh: '\u4f7f\u7528 Ninja \u6784\u5efa\u7cfb\u7edf\u5e76\u884c\u6784\u5efa' } },
+        { name: 'JDK', cmd: 'java -version', desc: { en: 'Check Java Development Kit version', zh: '\u68c0\u67e5 Java \u5f00\u53d1\u5de5\u5177\u5305\u7248\u672c' } },
+        { name: 'simg2img', cmd: 'simg2img system.img system.raw.img', desc: { en: 'Convert sparse image to raw image', zh: '\u5c06\u7a00\u758f\u955c\u50cf\u8f6c\u6362\u4e3a\u539f\u59cb\u955c\u50cf' } },
+        { name: 'logcat', cmd: 'adb logcat -v time *:W', desc: { en: 'Stream device logs (warnings+)', zh: '\u6d41\u5f0f\u8f93\u51fa\u8bbe\u5907\u65e5\u5fd7\uff08\u8b66\u544a\u4ee5\u4e0a\uff09' } },
+      ],
+      apk: [
+        { name: 'apktool', cmd: 'apktool d app.apk -o app_decoded', desc: { en: 'Decompile APK for resource inspection', zh: '\u53cd\u7f16\u8bd1 APK \u4ee5\u68c0\u67e5\u8d44\u6e90' } },
+        { name: 'jadx', cmd: 'jadx -d output/ app.apk', desc: { en: 'Decompile APK to Java source code', zh: '\u5c06 APK \u53cd\u7f16\u8bd1\u4e3a Java \u6e90\u4ee3\u7801' } },
+        { name: 'aapt2', cmd: 'aapt2 dump badging app.apk', desc: { en: 'Display APK package info and permissions', zh: '\u663e\u793a APK \u5305\u4fe1\u606f\u548c\u6743\u9650' } },
+        { name: 'bundletool', cmd: 'bundletool build-apks --bundle=app.aab --output=app.apks', desc: { en: 'Build APKs from Android App Bundle', zh: '\u4ece Android App Bundle \u6784\u5efa APK' } },
+        { name: 'apksigner', cmd: 'apksigner sign --ks keystore.jks app.apk', desc: { en: 'Sign APK with keystore', zh: '\u4f7f\u7528\u5bc6\u94a5\u5e93\u7b7e\u540d APK' } },
+        { name: 'zipalign', cmd: 'zipalign -v 4 input.apk output.apk', desc: { en: 'Align APK for optimized loading', zh: '\u5bf9\u9f50 APK \u4ee5\u4f18\u5316\u52a0\u8f7d' } },
+        { name: 'dex2jar', cmd: 'd2j-dex2jar app.apk -o app.jar', desc: { en: 'Convert DEX to JAR for analysis', zh: '\u5c06 DEX \u8f6c\u6362\u4e3a JAR \u8fdb\u884c\u5206\u6790' } },
+        { name: 'adb install', cmd: 'adb install -r app.apk', desc: { en: 'Install/replace APK on device', zh: '\u5728\u8bbe\u5907\u4e0a\u5b89\u88c5/\u66ff\u6362 APK' } },
+        { name: 'lint', cmd: './gradlew lint', desc: { en: 'Run Android lint checks', zh: '\u8fd0\u884c Android lint \u68c0\u67e5' } },
+        { name: 'signapk', cmd: 'java -jar signapk.jar platform.x509.pem platform.pk8 in.apk out.apk', desc: { en: 'Sign APK with platform key', zh: '\u4f7f\u7528\u5e73\u53f0\u5bc6\u94a5\u7b7e\u540d APK' } },
+      ],
+      embedded: [
+        { name: 'buildroot', cmd: 'make menuconfig && make -j$(nproc)', desc: { en: 'Configure and build embedded Linux system', zh: '\u914d\u7f6e\u5e76\u6784\u5efa\u5d4c\u5165\u5f0f Linux \u7cfb\u7edf' } },
+        { name: 'cross-compiler', cmd: 'aarch64-linux-gnu-gcc -o app app.c', desc: { en: 'Cross-compile for ARM64 targets', zh: '\u4ea4\u53c9\u7f16\u8bd1 ARM64 \u76ee\u6807' } },
+        { name: 'dtc', cmd: 'dtc -I dts -O dtb -o output.dtb input.dts', desc: { en: 'Compile device tree source to binary', zh: '\u5c06\u8bbe\u5907\u6811\u6e90\u7801\u7f16\u8bd1\u4e3a\u4e8c\u8fdb\u5236' } },
+        { name: 'minicom', cmd: 'minicom -D /dev/ttyUSB0 -b 115200', desc: { en: 'Serial console for board debugging', zh: '\u7528\u4e8e\u677f\u5b50\u8c03\u8bd5\u7684\u4e32\u53e3\u63a7\u5236\u53f0' } },
+        { name: 'u-boot-tools', cmd: 'mkimage -A arm64 -T kernel -C none -d Image uImage', desc: { en: 'Create U-Boot bootable image', zh: '\u521b\u5efa U-Boot \u53ef\u542f\u52a8\u955c\u50cf' } },
+        { name: 'openocd', cmd: 'openocd -f interface/ftdi.cfg -f target/stm32.cfg', desc: { en: 'On-chip debugger for JTAG/SWD', zh: '\u7528\u4e8e JTAG/SWD \u7684\u7247\u4e0a\u8c03\u8bd5\u5668' } },
+        { name: 'strace', cmd: 'strace -f -e trace=network ./app', desc: { en: 'Trace system calls and signals', zh: '\u8ddf\u8e2a\u7cfb\u7edf\u8c03\u7528\u548c\u4fe1\u53f7' } },
+        { name: 'busybox', cmd: 'busybox ls -la /tmp', desc: { en: 'Swiss-army knife for embedded Linux', zh: '\u5d4c\u5165\u5f0f Linux \u7684\u4e07\u80fd\u5de5\u5177' } },
+        { name: 'perf', cmd: 'perf stat -e cache-misses ./app', desc: { en: 'Performance analysis tool', zh: '\u6027\u80fd\u5206\u6790\u5de5\u5177' } },
+        { name: 'ssh', cmd: 'ssh root@192.168.1.100', desc: { en: 'Remote shell to embedded target', zh: '\u8fdc\u7a0b\u767b\u5f55\u5d4c\u5165\u5f0f\u76ee\u6807' } },
+      ],
+      smart: [
+        { name: 'mosquitto', cmd: 'mosquitto_sub -h broker -t "device/#"', desc: { en: 'Subscribe to MQTT topics', zh: '\u8ba2\u9605 MQTT \u4e3b\u9898' } },
+        { name: 'esptool', cmd: 'esptool.py --port /dev/ttyUSB0 flash_id', desc: { en: 'Flash and manage ESP32/ESP8266 chips', zh: '\u5237\u5199\u548c\u7ba1\u7406 ESP32/ESP8266 \u82af\u7247' } },
+        { name: 'platformio', cmd: 'pio run --target upload', desc: { en: 'Build and upload IoT firmware', zh: '\u6784\u5efa\u5e76\u4e0a\u4f20 IoT \u56fa\u4ef6' } },
+        { name: 'nmap', cmd: 'nmap -sn 192.168.1.0/24', desc: { en: 'Discover devices on local network', zh: '\u53d1\u73b0\u5c40\u57df\u7f51\u4e0a\u7684\u8bbe\u5907' } },
+        { name: 'httpie', cmd: 'http GET http://device-ip/api/status', desc: { en: 'Human-friendly HTTP client for APIs', zh: '\u53cb\u597d\u7684 HTTP \u5ba2\u6237\u7aef\uff0c\u7528\u4e8e API \u8c03\u7528' } },
+        { name: 'avahi', cmd: 'avahi-browse -art', desc: { en: 'Discover mDNS/Bonjour services', zh: '\u53d1\u73b0 mDNS/Bonjour \u670d\u52a1' } },
+        { name: 'screen', cmd: 'screen /dev/ttyUSB0 115200', desc: { en: 'Serial terminal session', zh: '\u4e32\u53e3\u7ec8\u7aef\u4f1a\u8bdd' } },
+        { name: 'tshark', cmd: 'tshark -i wlan0 -f "port 1883"', desc: { en: 'Capture and analyze network packets', zh: '\u6355\u83b7\u548c\u5206\u6790\u7f51\u7edc\u6570\u636e\u5305' } },
+        { name: 'bluetoothctl', cmd: 'bluetoothctl scan on', desc: { en: 'Scan and manage Bluetooth devices', zh: '\u626b\u63cf\u548c\u7ba1\u7406\u84dd\u7259\u8bbe\u5907' } },
+        { name: 'openssl', cmd: 'openssl x509 -in cert.pem -text -noout', desc: { en: 'Inspect TLS certificates', zh: '\u68c0\u67e5 TLS \u8bc1\u4e66' } },
+      ],
+      cloud: [
+        { name: 'docker', cmd: 'docker compose up -d', desc: { en: 'Start services in detached mode', zh: '\u4ee5\u540e\u53f0\u6a21\u5f0f\u542f\u52a8\u670d\u52a1' } },
+        { name: 'kubectl', cmd: 'kubectl get pods -A', desc: { en: 'List all Kubernetes pods', zh: '\u5217\u51fa\u6240\u6709 Kubernetes Pod' } },
+        { name: 'terraform', cmd: 'terraform plan', desc: { en: 'Preview infrastructure changes', zh: '\u9884\u89c8\u57fa\u7840\u8bbe\u65bd\u53d8\u66f4' } },
+        { name: 'aws-cli', cmd: 'aws s3 ls', desc: { en: 'List S3 buckets', zh: '\u5217\u51fa S3 \u5b58\u50a8\u6876' } },
+        { name: 'helm', cmd: 'helm install myapp ./chart', desc: { en: 'Deploy Helm chart to Kubernetes', zh: '\u5c06 Helm chart \u90e8\u7f72\u5230 Kubernetes' } },
+        { name: 'ansible', cmd: 'ansible-playbook -i inventory deploy.yml', desc: { en: 'Run Ansible deployment playbook', zh: '\u8fd0\u884c Ansible \u90e8\u7f72\u5267\u672c' } },
+        { name: 'gh', cmd: 'gh pr create --fill', desc: { en: 'Create GitHub pull request', zh: '\u521b\u5efa GitHub Pull Request' } },
+        { name: 'jq', cmd: "curl -s api | jq '.data[] | .name'", desc: { en: 'Parse and filter JSON output', zh: '\u89e3\u6790\u548c\u8fc7\u6ee4 JSON \u8f93\u51fa' } },
+        { name: 'nginx', cmd: 'nginx -t && nginx -s reload', desc: { en: 'Test config and reload Nginx', zh: '\u6d4b\u8bd5\u914d\u7f6e\u5e76\u91cd\u8f7d Nginx' } },
+        { name: 'redis-cli', cmd: 'redis-cli ping', desc: { en: 'Test Redis server connection', zh: '\u6d4b\u8bd5 Redis \u670d\u52a1\u5668\u8fde\u63a5' } },
+      ],
+    };
+
+    function switchDeptTab(tab) {
+      activeDeptTab = tab;
+      document.querySelectorAll('.dept-tab-btn').forEach(el => {
+        el.classList.remove('active');
+        el.classList.add('border-transparent', 'text-surface-500');
+        el.classList.remove('border-surface-200');
+      });
+      const btn = document.querySelector('.dept-tab-btn[data-dept-tab="' + tab + '"]');
+      if (btn) {
+        btn.classList.add('active');
+        btn.classList.remove('border-transparent', 'text-surface-500');
+        btn.classList.add('border-surface-200');
+      }
+      renderDeptTools();
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function renderDeptTools() {
+      const container = document.getElementById('dept-tools-container');
+      if (!container) return;
+      const tools = deptTools[activeDeptTab] || [];
+      const copyLabel = i18n[currentLang]['copy.btn'];
+      container.innerHTML = '<div class="grid sm:grid-cols-2 gap-3">' + tools.map(t =>
+        '<div class="dept-tool-card rounded-xl border border-surface-100 bg-surface-50 p-4">' +
+          '<div class="flex items-center justify-between mb-1">' +
+            '<h4 class="font-semibold text-surface-900 text-sm">' + escapeHtml(t.name) + '</h4>' +
+          '</div>' +
+          '<p class="text-xs text-surface-500 mb-2">' + escapeHtml(t.desc[currentLang]) + '</p>' +
+          '<div class="code-block" onclick="copyFromBlock(this)">' +
+            '<pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-14 text-xs leading-relaxed overflow-x-auto"><code>' + escapeHtml(t.cmd) + '</code></pre>' +
+            '<button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy">' +
+              '<svg class="icon-copy w-3 h-3 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>' +
+              '<svg class="icon-check w-3 h-3 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>' +
+              '<span class="ml-4">' + escapeHtml(copyLabel) + '</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      ).join('') + '</div>';
+    }
+
+    // ===================== Copy Functions =====================
+    function copyFromBlock(block) {
+      const code = block.querySelector('code').innerText;
+      const btn = block.querySelector('.copy-btn');
+      navigator.clipboard.writeText(code).then(() => {
+        showCopyFeedback(btn);
+        showToast();
+      });
+    }
+
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const origHTML = btn.innerHTML;
+        btn.innerHTML = '<svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="text-green-600">' + i18n[currentLang]['copy.copied'] + '</span>';
+        showToast();
+        setTimeout(() => { btn.innerHTML = origHTML; }, 1500);
+      });
+    }
+
+    function showCopyFeedback(btn) {
+      if (!btn) return;
+      btn.classList.add('copied');
+      const label = btn.querySelector('span');
+      if (label) label.textContent = i18n[currentLang]['copy.copied'];
+      btn.classList.add('bg-green-600');
+      btn.classList.remove('bg-surface-700');
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.classList.remove('bg-green-600');
+        btn.classList.add('bg-surface-700');
+        if (label) label.textContent = i18n[currentLang]['copy.btn'];
+      }, 1500);
+    }
+
+    let toastTimeout;
+    function showToast() {
+      const toast = document.getElementById('copy-toast');
+      clearTimeout(toastTimeout);
+      toast.classList.add('show');
+      toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 1800);
+    }
+
+    // ===================== Qwen AI Assistant =====================
+    let qwenMessages = [];
+
+    function getSystemMessage() {
+      const lang = currentLang === 'zh' ? 'Chinese (Mandarin)' : 'English';
+      return {
+        role: 'system',
+        content: `You are an AI assistant for SEI Robotics, a company that builds Android TV devices, OTT streaming boxes, smart home products, and cloud infrastructure. Respond in ${lang}.
+
+The company has these departments:
+- Android Source: AOSP builds, kernel development, system-level Android work
+- APK Tools: Android app development, APK analysis, reverse engineering
+- Embedded Linux: Buildroot, cross-compilation, device trees, board bring-up
+- Smart Devices: IoT, MQTT, ESP32, Bluetooth, network discovery
+- Cloud Engineering: Docker, Kubernetes, Terraform, CI/CD, AWS
+
+When recommending CLI tools:
+1. Ask clarifying questions about the user's specific workflow if needed
+2. Recommend specific tools with install commands
+3. Show example usage commands
+4. Format tool names in \`backticks\` and commands in code blocks
+5. Keep responses concise and practical`
+      };
+    }
+
+    async function sendQwenMessage() {
+      const input = document.getElementById('qwen-input');
+      const keyInput = document.getElementById('qwen-api-key');
+      const apiKey = keyInput.value.trim();
+      const userText = input.value.trim();
+
+      if (!apiKey || !apiKey.startsWith('sk-or-')) {
+        alert(i18n[currentLang]['ai.error.key']);
+        keyInput.focus();
+        return;
+      }
+      if (!userText) {
+        alert(i18n[currentLang]['ai.error.empty']);
+        return;
+      }
+
+      input.value = '';
+      appendMessage('user', userText);
+      qwenMessages.push({ role: 'user', content: userText });
+      showTypingIndicator();
+
+      try {
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + apiKey,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.href,
+            'X-Title': 'SEI Robotics CLI Guide'
+          },
+          body: JSON.stringify({
+            model: 'qwen/qwen-2.5-coder-32b-instruct',
+            messages: [getSystemMessage(), ...qwenMessages],
+            stream: true,
+            max_tokens: 1500,
+            temperature: 0.7
+          })
+        });
+
+        if (response.status === 401) {
+          removeTypingIndicator();
+          appendMessage('ai', i18n[currentLang]['ai.error.auth']);
+          qwenMessages.pop();
+          return;
+        }
+        if (response.status === 429) {
+          removeTypingIndicator();
+          appendMessage('ai', i18n[currentLang]['ai.error.rate']);
+          qwenMessages.pop();
+          return;
+        }
+        if (!response.ok) {
+          removeTypingIndicator();
+          appendMessage('ai', i18n[currentLang]['ai.error.network']);
+          qwenMessages.pop();
+          return;
+        }
+
+        removeTypingIndicator();
+        const msgEl = appendMessage('ai', '');
+        const contentEl = msgEl.querySelector('.msg-content');
+        let fullText = '';
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') break;
+            try {
+              const parsed = JSON.parse(data);
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) {
+                fullText += delta;
+                contentEl.innerHTML = formatMarkdown(fullText);
+              }
+            } catch (e) { /* skip malformed chunks */ }
+          }
+          const container = document.getElementById('qwen-messages');
+          container.scrollTop = container.scrollHeight;
+        }
+
+        qwenMessages.push({ role: 'assistant', content: fullText });
+      } catch (err) {
+        removeTypingIndicator();
+        appendMessage('ai', i18n[currentLang]['ai.error.network']);
+        qwenMessages.pop();
+      }
+    }
+
+    function appendMessage(role, content) {
+      const container = document.getElementById('qwen-messages');
+      const div = document.createElement('div');
+      div.className = role === 'user' ? 'qwen-user-msg p-3 text-sm' : 'qwen-ai-msg p-3 text-sm';
+      div.innerHTML = '<div class="msg-content">' + (role === 'user' ? escapeHtml(content) : formatMarkdown(content)) + '</div>';
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return div;
+    }
+
+    function formatMarkdown(text) {
+      if (!text) return '';
+      // Code blocks
+      text = text.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+      // Inline code
+      text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // Bold
+      text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      // Line breaks
+      text = text.replace(/\n/g, '<br>');
+      return text;
+    }
+
+    function showTypingIndicator() {
+      const container = document.getElementById('qwen-messages');
+      const div = document.createElement('div');
+      div.className = 'qwen-ai-msg p-3 typing-indicator';
+      div.id = 'typing-indicator';
+      div.innerHTML = '<span></span><span></span><span></span>';
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('typing-indicator');
+      if (el) el.remove();
+    }
+
+    function toggleKeyVisibility() {
+      const input = document.getElementById('qwen-api-key');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // ===================== Scroll Handlers =====================
+    const backToTop = document.getElementById('back-to-top');
+    const langSticky = document.getElementById('lang-sticky');
+
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y > 600) {
+        backToTop.classList.add('visible');
+        langSticky.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+        langSticky.classList.remove('visible');
+      }
+    }, { passive: true });
+
+    // ===================== Init =====================
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDeptTools();
+      applyLanguage();
+    });
+  </script>
+
+</body>
+</html>
