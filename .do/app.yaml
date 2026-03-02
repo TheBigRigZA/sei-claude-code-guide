@@ -1,0 +1,14 @@
+name: sei-claude-code-guide
+region: sgp
+static_sites:
+  - name: sei-claude-code-guide
+    github:
+      repo: TheBigRigZA/sei-claude-code-guide
+      branch: main
+      deploy_on_push: true
+    source_dir: /
+    index_document: index.html
+    output_dir: /
+domains:
+  - domain: sei.mediabox.co
+    type: PRIMARY
