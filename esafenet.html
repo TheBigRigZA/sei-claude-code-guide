@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESAFENET Compatibility Guide — Claude Code + 亿赛通加密</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#f0f5ff',
+              100: '#e0eaff',
+              200: '#c2d5ff',
+              300: '#94b4ff',
+              400: '#6690ff',
+              500: '#3b6cff',
+              600: '#1a4dff',
+              700: '#0033e0',
+              800: '#002db8',
+              900: '#002899',
+              950: '#001a66',
+            },
+            surface: {
+              50:  '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    pre { white-space: pre; overflow-x: auto; }
+    .code-block { position: relative; cursor: pointer; }
+    .code-block pre { transition: box-shadow 0.15s, border-color 0.15s; border: 1px solid transparent; }
+    .code-block:hover pre { box-shadow: 0 0 0 2px rgba(59, 108, 255, 0.25); border-color: rgba(59, 108, 255, 0.3); }
+    .copy-btn { transition: background-color 0.15s, transform 0.1s; }
+    .copy-btn:active { transform: scale(0.92); }
+    .copy-btn .icon-copy, .copy-btn .icon-check { transition: opacity 0.15s; }
+    .copy-btn.copied .icon-copy { opacity: 0; }
+    .copy-btn.copied .icon-check { opacity: 1; }
+    .copy-btn:not(.copied) .icon-copy { opacity: 1; }
+    .copy-btn:not(.copied) .icon-check { opacity: 0; }
+    details summary { cursor: pointer; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .chevron { transform: rotate(90deg); }
+    .chevron { transition: transform 0.2s; }
+    .copy-toast {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(100%); opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+      z-index: 100; pointer-events: none;
+    }
+    .copy-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .back-to-top {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 50;
+      opacity: 0; transform: translateY(1rem);
+      transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+    }
+    .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .lang-toggle { transition: background-color 0.2s, transform 0.1s; }
+    .lang-toggle:active { transform: scale(0.95); }
+    .lang-sticky {
+      position: fixed; top: 1rem; right: 2rem; z-index: 50;
+      opacity: 0; transform: translateY(-1rem);
+      transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+    }
+    .lang-sticky.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    @media print { .no-print { display: none !important; } }
+  </style>
+</head>
+
+<body class="bg-surface-50 text-surface-800 antialiased">
+
+  <!-- ───────── HERO ───────── -->
+  <header class="relative overflow-hidden bg-gradient-to-br from-surface-900 via-surface-800 to-brand-950 text-white">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-20 left-10 w-72 h-72 bg-brand-500 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-20 w-96 h-96 bg-brand-400 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative max-w-5xl mx-auto px-6 py-16 text-center">
+      <button onclick="toggleLanguage()" class="lang-toggle absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-1.5 bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 rounded-full px-3 py-1.5 text-sm font-medium text-white no-print" title="Switch language">
+        <span id="lang-hero-label">EN | 中文</span>
+      </button>
+      <a href="index.html" class="inline-flex items-center gap-2 text-surface-400 hover:text-white text-sm font-medium mb-6 transition no-print">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <span data-i18n="nav.back">Back to Setup Guide</span>
+      </a>
+      <div class="inline-flex items-center gap-2 rounded-full bg-amber-500/20 backdrop-blur px-4 py-1.5 text-sm font-medium mb-6 border border-amber-400/30">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span data-i18n="hero.badge">IT Admin Action Required</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+        <span data-i18n="hero.title1">ESAFENET Encryption</span><br class="hidden sm:block" />
+        <span class="text-brand-400" data-i18n="hero.title2">Compatibility Guide</span>
+      </h1>
+      <p class="mt-4 text-base sm:text-lg text-surface-300 max-w-2xl mx-auto leading-relaxed" data-i18n-html="hero.desc">
+        How to configure <strong class="text-white">亿赛通 (ESAFENET) CDG</strong> transparent encryption to work with Claude Code and modern CLI development tools.
+      </p>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-16 space-y-16">
+
+    <!-- ───────── WHAT IS ESAFENET ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">1</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="s1.title">What Is ESAFENET?</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-4">
+        <p class="text-surface-700" data-i18n-html="s1.p1">
+          <strong>亿赛通 (ESAFENET)</strong> CDG is an enterprise Data Loss Prevention (DLP) system that uses <strong>transparent encryption</strong> (透明加密) to automatically encrypt files at the kernel driver level. It is widely used in Chinese enterprises to protect source code, design documents, and proprietary data.
+        </p>
+        <div class="grid sm:grid-cols-3 gap-4 mt-4">
+          <div class="rounded-xl bg-surface-50 border border-surface-100 p-4">
+            <div class="text-2xl mb-2">🔐</div>
+            <h4 class="font-semibold text-surface-900 text-sm mb-1" data-i18n="s1.card1.title">Transparent Encryption</h4>
+            <p class="text-xs text-surface-600" data-i18n="s1.card1.desc">Files are encrypted/decrypted automatically by a kernel driver. Users see normal files in whitelisted apps.</p>
+          </div>
+          <div class="rounded-xl bg-surface-50 border border-surface-100 p-4">
+            <div class="text-2xl mb-2">📋</div>
+            <h4 class="font-semibold text-surface-900 text-sm mb-1" data-i18n="s1.card2.title">Process Binding</h4>
+            <p class="text-xs text-surface-600" data-i18n="s1.card2.desc">Only whitelisted executables can read/write encrypted files. Other processes see garbled data.</p>
+          </div>
+          <div class="rounded-xl bg-surface-50 border border-surface-100 p-4">
+            <div class="text-2xl mb-2">🛡️</div>
+            <h4 class="font-semibold text-surface-900 text-sm mb-1" data-i18n="s1.card3.title">Central Management</h4>
+            <p class="text-xs text-surface-600" data-i18n="s1.card3.desc">CDG Server controls policies, user groups, file extensions, and approval workflows.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── HOW IT WORKS ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">2</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="s2.title">How It Works (Technical)</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8 space-y-6">
+        <p class="text-surface-700" data-i18n="s2.intro">Three components are installed on each endpoint:</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border border-surface-200 rounded-lg overflow-hidden">
+            <thead class="bg-surface-100">
+              <tr>
+                <th class="text-left px-4 py-2.5 font-semibold text-surface-700" data-i18n="s2.th1">Component</th>
+                <th class="text-left px-4 py-2.5 font-semibold text-surface-700" data-i18n="s2.th2">Purpose</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-100">
+              <tr>
+                <td class="px-4 py-2.5 font-mono text-xs">CDGRegedit.exe</td>
+                <td class="px-4 py-2.5 text-surface-600" data-i18n="s2.r1">Main process: GUI, encryption policy updates, user auth</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2.5 font-mono text-xs">EstVPN.exe</td>
+                <td class="px-4 py-2.5 text-surface-600" data-i18n="s2.r2">Watchdog: monitors and restarts main process if killed</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2.5 font-mono text-xs">Filelock.sys</td>
+                <td class="px-4 py-2.5 text-surface-600" data-i18n="s2.r3">Kernel driver: intercepts file I/O for real-time encrypt/decrypt</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rounded-xl bg-blue-50 border border-blue-200 p-4 flex gap-3">
+          <span class="text-blue-600 text-lg shrink-0">&#9432;</span>
+          <div class="text-sm text-blue-800" data-i18n-html="s2.key">
+            <strong>Key concept:</strong> The <code class="bg-blue-100 px-1 rounded">Filelock.sys</code> kernel driver intercepts all file read/write operations. Encryption and decryption happen <strong>only</strong> when both conditions are met: (1) the calling process is in the whitelist, AND (2) the file extension matches that process's approved list. If a process is NOT whitelisted, it sees raw encrypted binary data.
+          </div>
+        </div>
+
+        <h4 class="font-semibold text-surface-900" data-i18n="s2.enc.title">Encryption Method</h4>
+        <ul class="text-sm text-surface-700 space-y-2 list-disc list-inside">
+          <li data-i18n="s2.enc.1">AES symmetric encryption for file content (random per-file key)</li>
+          <li data-i18n="s2.enc.2">RSA asymmetric encryption wraps the AES key</li>
+          <li data-i18n-html="s2.enc.3">Encrypted files have header signature: <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">62 14 23 65</code></li>
+          <li data-i18n="s2.enc.4">All encryption/decryption occurs in kernel memory — no plaintext temp files on disk</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────── THE PROBLEM ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-red-100 text-red-700 font-bold text-lg">!</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="s3.title">The Problem with Claude Code</h2>
+      </div>
+      <div class="rounded-2xl border border-red-200 bg-red-50/50 shadow-sm p-6 sm:p-8 space-y-4">
+        <p class="text-surface-700" data-i18n="s3.intro">ESAFENET was designed for traditional desktop applications (Office, Visual Studio, AutoCAD). It does NOT natively support modern CLI development tools. Here's what breaks:</p>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="rounded-xl bg-white border border-red-100 p-4">
+            <h4 class="font-semibold text-red-800 text-sm mb-1" data-i18n="s3.p1.title">Claude Code Can't Read Encrypted Files</h4>
+            <p class="text-xs text-surface-600" data-i18n-html="s3.p1.desc">Claude Code runs as <code class="bg-surface-100 px-1 rounded">node.exe</code>. If <code class="bg-surface-100 px-1 rounded">node.exe</code> is not in the process whitelist, it receives garbled binary data instead of source code.</p>
+          </div>
+          <div class="rounded-xl bg-white border border-red-100 p-4">
+            <h4 class="font-semibold text-red-800 text-sm mb-1" data-i18n="s3.p2.title">Files Written Lose Encryption</h4>
+            <p class="text-xs text-surface-600" data-i18n="s3.p2.desc">Files created by a non-whitelisted process are saved as unencrypted plaintext, violating security policy.</p>
+          </div>
+          <div class="rounded-xl bg-white border border-red-100 p-4">
+            <h4 class="font-semibold text-red-800 text-sm mb-1" data-i18n="s3.p3.title">Git Operations Fail</h4>
+            <p class="text-xs text-surface-600" data-i18n-html="s3.p3.desc"><code class="bg-surface-100 px-1 rounded">git.exe</code> is typically not whitelisted, so commits, diffs, and merges produce corrupted results on encrypted files.</p>
+          </div>
+          <div class="rounded-xl bg-white border border-red-100 p-4">
+            <h4 class="font-semibold text-red-800 text-sm mb-1" data-i18n="s3.p4.title">Sub-Process Chain Breaks</h4>
+            <p class="text-xs text-surface-600" data-i18n="s3.p4.desc">Claude Code spawns git, shell, compilers, and linters as sub-processes. Each one needs whitelisting or it fails on encrypted files.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── RECOMMENDATIONS ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-green-100 text-green-700 font-bold text-lg">&#10003;</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="s4.title">Recommendations for IT Admins</h2>
+      </div>
+
+      <!-- Option A -->
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden mb-6">
+        <div class="bg-green-50 border-b border-green-200 px-6 py-4 flex items-center gap-3">
+          <span class="text-xs text-green-700 bg-green-100 rounded-full px-2.5 py-0.5 font-bold" data-i18n="s4.a.tag">Recommended</span>
+          <h3 class="font-bold text-surface-900" data-i18n="s4.a.title">Option A: Add Processes to Whitelist</h3>
+        </div>
+        <div class="p-6 sm:p-8 space-y-4">
+          <p class="text-sm text-surface-700" data-i18n="s4.a.desc">Log into the CDG Server management console and add the following processes to the transparent encryption policy's controlled process list (策略管理 → 透明加密策略 → 受控进程):</p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm border border-surface-200 rounded-lg overflow-hidden">
+              <thead class="bg-surface-100">
+                <tr>
+                  <th class="text-left px-4 py-2.5 font-semibold text-surface-700" data-i18n="s4.a.th1">Process</th>
+                  <th class="text-left px-4 py-2.5 font-semibold text-surface-700" data-i18n="s4.a.th2">Why Needed</th>
+                  <th class="text-left px-4 py-2.5 font-semibold text-surface-700" data-i18n="s4.a.th3">File Extensions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-100">
+                <tr>
+                  <td class="px-4 py-2.5 font-mono text-xs font-semibold">node.exe</td>
+                  <td class="px-4 py-2.5 text-surface-600 text-xs" data-i18n="s4.a.node">Claude Code runtime, npm, build tools</td>
+                  <td class="px-4 py-2.5 font-mono text-xs">.js .ts .json .md .html .css .yaml .yml .jsx .tsx .vue .py .java .cpp .h .c</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2.5 font-mono text-xs font-semibold">git.exe</td>
+                  <td class="px-4 py-2.5 text-surface-600 text-xs" data-i18n="s4.a.git">Version control (diff, commit, merge)</td>
+                  <td class="px-4 py-2.5 font-mono text-xs">(same as above)</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2.5 font-mono text-xs font-semibold">bash.exe / sh.exe</td>
+                  <td class="px-4 py-2.5 text-surface-600 text-xs" data-i18n="s4.a.bash">Shell operations spawned by Claude Code</td>
+                  <td class="px-4 py-2.5 font-mono text-xs">(same as above)</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2.5 font-mono text-xs font-semibold">cmd.exe</td>
+                  <td class="px-4 py-2.5 text-surface-600 text-xs" data-i18n="s4.a.cmd">Windows command prompt</td>
+                  <td class="px-4 py-2.5 font-mono text-xs">(same as above)</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2.5 font-mono text-xs font-semibold">powershell.exe</td>
+                  <td class="px-4 py-2.5 text-surface-600 text-xs" data-i18n="s4.a.ps">PowerShell scripting</td>
+                  <td class="px-4 py-2.5 font-mono text-xs">(same as above)</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-2.5 font-mono text-xs font-semibold">python.exe / python3.exe</td>
+                  <td class="px-4 py-2.5 text-surface-600 text-xs" data-i18n="s4.a.py">Python scripts and tooling</td>
+                  <td class="px-4 py-2.5 font-mono text-xs">.py .json .yaml .yml .txt .cfg .ini</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option B -->
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden mb-6">
+        <div class="bg-surface-50 border-b border-surface-200 px-6 py-4">
+          <h3 class="font-bold text-surface-900" data-i18n="s4.b.title">Option B: Directory Exclusions</h3>
+        </div>
+        <div class="p-6 sm:p-8 space-y-4">
+          <p class="text-sm text-surface-700" data-i18n="s4.b.desc">Request that the following paths are excluded from encryption entirely (落地加解密策略 → 路径排除):</p>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm leading-relaxed overflow-x-auto"><code># Directories to exclude from encryption
+node_modules\          # npm dependencies (thousands of files)
+.git\                  # Git internal data
+.claude\               # Claude Code config and cache
+%APPDATA%\claude\      # Claude Code app data
+%TEMP%\                # Temporary files</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2.5 right-2.5 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2.5 py-1.5 text-xs font-medium" title="Copy to clipboard">
+              <svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg>
+              <svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+              <span class="ml-5">Copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option C -->
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden mb-6">
+        <div class="bg-surface-50 border-b border-surface-200 px-6 py-4">
+          <h3 class="font-bold text-surface-900" data-i18n="s4.c.title">Option C: Developer Group Policy</h3>
+        </div>
+        <div class="p-6 sm:p-8 space-y-4">
+          <p class="text-sm text-surface-700" data-i18n="s4.c.desc">Create a separate organizational unit in CDG Server for developer workstations with a tailored encryption policy that:</p>
+          <ul class="text-sm text-surface-700 space-y-2 list-disc list-inside">
+            <li data-i18n="s4.c.1">Includes all development executables in the process whitelist</li>
+            <li data-i18n="s4.c.2">Covers all source code file extensions</li>
+            <li data-i18n="s4.c.3">Excludes development directories from forced encryption</li>
+            <li data-i18n="s4.c.4">Allows clipboard operations for code (removes character limits)</li>
+          </ul>
+          <p class="text-sm text-surface-700" data-i18n="s4.c.note">This provides the most comprehensive solution without weakening security for non-developer departments.</p>
+        </div>
+      </div>
+
+      <!-- Option D -->
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden">
+        <div class="bg-surface-50 border-b border-surface-200 px-6 py-4">
+          <h3 class="font-bold text-surface-900" data-i18n="s4.d.title">Option D: Switch to Intelligent Encryption Mode</h3>
+        </div>
+        <div class="p-6 sm:p-8 space-y-4">
+          <p class="text-sm text-surface-700" data-i18n="s4.d.desc">If possible, switch developer machines from forced transparent encryption to intelligent encryption mode (智能加密). In this mode, only files detected as containing sensitive content are encrypted, leaving most source code freely accessible to all tools.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── VERIFICATION ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">5</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="s5.title">Verification Steps</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8">
+        <p class="text-sm text-surface-700 mb-4" data-i18n="s5.intro">After IT applies the policy changes, developers should verify:</p>
+        <ol class="space-y-3">
+          <li class="flex gap-3 items-start">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-50 text-brand-700 font-bold text-xs shrink-0 mt-0.5">1</span>
+            <div>
+              <p class="text-sm font-medium text-surface-900" data-i18n="s5.v1.title">Claude Code can read project files</p>
+              <p class="text-xs text-surface-500" data-i18n="s5.v1.desc">Open Claude Code in a project directory and ask it to summarize a source file. It should return readable code, not garbled binary.</p>
+            </div>
+          </li>
+          <li class="flex gap-3 items-start">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-50 text-brand-700 font-bold text-xs shrink-0 mt-0.5">2</span>
+            <div>
+              <p class="text-sm font-medium text-surface-900" data-i18n="s5.v2.title">Claude Code can write files</p>
+              <p class="text-xs text-surface-500" data-i18n="s5.v2.desc">Ask Claude Code to create or modify a file. Verify the saved file can still be opened by other whitelisted applications and remains encrypted on disk.</p>
+            </div>
+          </li>
+          <li class="flex gap-3 items-start">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-50 text-brand-700 font-bold text-xs shrink-0 mt-0.5">3</span>
+            <div>
+              <p class="text-sm font-medium text-surface-900" data-i18n="s5.v3.title">Git operations work correctly</p>
+              <p class="text-xs text-surface-500" data-i18n="s5.v3.desc">Run <code class="bg-surface-100 px-1 rounded">git diff</code> and <code class="bg-surface-100 px-1 rounded">git log -p</code> — output should show readable diffs, not encrypted binary.</p>
+            </div>
+          </li>
+          <li class="flex gap-3 items-start">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-50 text-brand-700 font-bold text-xs shrink-0 mt-0.5">4</span>
+            <div>
+              <p class="text-sm font-medium text-surface-900" data-i18n="s5.v4.title">Encryption is maintained</p>
+              <p class="text-xs text-surface-500" data-i18n-html="s5.v4.desc">Check a file's encryption status with a hex editor — encrypted files start with <code class="bg-surface-100 px-1 rounded">62 14 23 65</code>. Verify files aren't accidentally saved as plaintext.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ───────── QUICK REF FOR IT ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">&#9733;</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="s6.title">Quick Reference for IT</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-surface-100">
+              <tr>
+                <th class="text-left px-5 py-3 font-semibold text-surface-700" data-i18n="s6.th1">Item</th>
+                <th class="text-left px-5 py-3 font-semibold text-surface-700" data-i18n="s6.th2">Details</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-surface-100">
+              <tr class="hover:bg-surface-50"><td class="px-5 py-3 text-surface-600" data-i18n="s6.r1">CDG Admin Path</td><td class="px-5 py-3 font-mono text-xs">/CDGServer3/ → Strategy Management</td></tr>
+              <tr class="hover:bg-surface-50"><td class="px-5 py-3 text-surface-600" data-i18n="s6.r2">Process Whitelist Location</td><td class="px-5 py-3 font-mono text-xs" data-i18n="s6.r2v">Transparent Encryption → Controlled Processes</td></tr>
+              <tr class="hover:bg-surface-50"><td class="px-5 py-3 text-surface-600" data-i18n="s6.r3">Required Processes</td><td class="px-5 py-3 font-mono text-xs">node.exe, git.exe, bash.exe, cmd.exe, powershell.exe</td></tr>
+              <tr class="hover:bg-surface-50"><td class="px-5 py-3 text-surface-600" data-i18n="s6.r4">Key Extensions</td><td class="px-5 py-3 font-mono text-xs">.js .ts .json .md .html .css .yaml .py .java .cpp .h .c .vue .jsx .tsx</td></tr>
+              <tr class="hover:bg-surface-50"><td class="px-5 py-3 text-surface-600" data-i18n="s6.r5">Exclude Dirs</td><td class="px-5 py-3 font-mono text-xs">node_modules\, .git\, .claude\, %TEMP%\</td></tr>
+              <tr class="hover:bg-surface-50"><td class="px-5 py-3 text-surface-600" data-i18n="s6.r6">Encrypted File Signature</td><td class="px-5 py-3 font-mono text-xs">62 14 23 65 (first 4 bytes)</td></tr>
+              <tr class="hover:bg-surface-50"><td class="px-5 py-3 text-surface-600" data-i18n="s6.r7">Admin Roles Required</td><td class="px-5 py-3 text-xs" data-i18n="s6.r7v">System Administrator or Security Administrator</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────── KNOWN ISSUES ───────── -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-100 text-amber-700 font-bold text-lg">&#9888;</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="s7.title">Known Issues &amp; Limitations</h2>
+      </div>
+      <div class="rounded-2xl border border-surface-200 bg-white shadow-sm divide-y divide-surface-100 overflow-hidden">
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="s7.q1">Clipboard paste limited to &lt;50 characters</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600" data-i18n="s7.a1">Some ESAFENET configurations restrict clipboard operations for controlled processes. Ask IT to increase or remove the clipboard character limit for developer tools in the CDG policy settings.</div>
+        </details>
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="s7.q2">Performance degradation on large projects</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600" data-i18n="s7.a2">The kernel-level I/O interception adds overhead to every file read/write. For large projects, request that node_modules/ and .git/ directories are excluded from encryption to significantly reduce overhead.</div>
+        </details>
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="s7.q3">WSL (Windows Subsystem for Linux) compatibility</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600" data-i18n="s7.a3">ESAFENET's Windows kernel driver does not intercept I/O from WSL Linux processes. Files accessed via WSL may bypass encryption entirely. Check with IT security before using WSL with encrypted projects.</div>
+        </details>
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="s7.q4">New file extensions not covered</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600" data-i18n-html="s7.a4">If you work with uncommon file types (<code class="bg-surface-100 px-1 rounded">.svelte</code>, <code class="bg-surface-100 px-1 rounded">.astro</code>, <code class="bg-surface-100 px-1 rounded">.rs</code>, <code class="bg-surface-100 px-1 rounded">.go</code>, etc.), request IT to add them to the extension list for your whitelisted processes.</div>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ───────── FOOTER ───────── -->
+  <footer class="border-t border-surface-200 bg-white mt-16">
+    <div class="max-w-5xl mx-auto px-6 py-8 text-center text-sm text-surface-500">
+      <p data-i18n="footer.updated">Last updated: March 2026 &middot; Internal use only</p>
+      <p class="mt-2">
+        <a href="index.html" class="text-brand-600 hover:underline" data-i18n="footer.back">Back to Setup Guide</a>
+        &middot;
+        <a href="https://www.esafenet.com" class="text-brand-600 hover:underline" target="_blank">ESAFENET Official Site</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ───────── COPY TOAST ───────── -->
+  <div id="copy-toast" class="copy-toast no-print">
+    <div class="flex items-center gap-2 bg-surface-900 text-white text-sm font-medium px-4 py-2.5 rounded-lg shadow-xl">
+      <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      <span data-i18n="copy.toast">Copied to clipboard</span>
+    </div>
+  </div>
+
+  <!-- ───────── STICKY LANG TOGGLE ───────── -->
+  <button id="lang-sticky" onclick="toggleLanguage()" class="lang-sticky no-print bg-white border border-surface-200 shadow-lg hover:shadow-xl text-surface-700 hover:text-brand-600 rounded-full px-3 py-1.5 text-sm font-medium transition flex items-center gap-1.5">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+    <span id="lang-sticky-label">EN | 中文</span>
+  </button>
+
+  <!-- ───────── BACK TO TOP ───────── -->
+  <button id="back-to-top" onclick="window.scrollTo({top:0})" class="back-to-top no-print bg-white border border-surface-200 shadow-lg hover:shadow-xl text-surface-600 hover:text-brand-600 rounded-full w-11 h-11 flex items-center justify-center transition" title="Back to top" aria-label="Back to top">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+  </button>
+
+  <!-- ───────── SCRIPTS ───────── -->
+  <script>
+    let currentLang = localStorage.getItem('sei-lang') || 'en';
+
+    const i18n = {
+      en: {
+        'nav.back': 'Back to Setup Guide',
+        'hero.badge': 'IT Admin Action Required',
+        'hero.title1': 'ESAFENET Encryption',
+        'hero.title2': 'Compatibility Guide',
+        'hero.desc': 'How to configure <strong class="text-white">亿赛通 (ESAFENET) CDG</strong> transparent encryption to work with Claude Code and modern CLI development tools.',
+        's1.title': 'What Is ESAFENET?',
+        's1.p1': '<strong>亿赛通 (ESAFENET)</strong> CDG is an enterprise Data Loss Prevention (DLP) system that uses <strong>transparent encryption</strong> (透明加密) to automatically encrypt files at the kernel driver level. It is widely used in Chinese enterprises to protect source code, design documents, and proprietary data.',
+        's1.card1.title': 'Transparent Encryption',
+        's1.card1.desc': 'Files are encrypted/decrypted automatically by a kernel driver. Users see normal files in whitelisted apps.',
+        's1.card2.title': 'Process Binding',
+        's1.card2.desc': 'Only whitelisted executables can read/write encrypted files. Other processes see garbled data.',
+        's1.card3.title': 'Central Management',
+        's1.card3.desc': 'CDG Server controls policies, user groups, file extensions, and approval workflows.',
+        's2.title': 'How It Works (Technical)',
+        's2.intro': 'Three components are installed on each endpoint:',
+        's2.th1': 'Component', 's2.th2': 'Purpose',
+        's2.r1': 'Main process: GUI, encryption policy updates, user auth',
+        's2.r2': 'Watchdog: monitors and restarts main process if killed',
+        's2.r3': 'Kernel driver: intercepts file I/O for real-time encrypt/decrypt',
+        's2.key': '<strong>Key concept:</strong> The <code class="bg-blue-100 px-1 rounded">Filelock.sys</code> kernel driver intercepts all file read/write operations. Encryption and decryption happen <strong>only</strong> when both conditions are met: (1) the calling process is in the whitelist, AND (2) the file extension matches that process\'s approved list. If a process is NOT whitelisted, it sees raw encrypted binary data.',
+        's2.enc.title': 'Encryption Method',
+        's2.enc.1': 'AES symmetric encryption for file content (random per-file key)',
+        's2.enc.2': 'RSA asymmetric encryption wraps the AES key',
+        's2.enc.3': 'Encrypted files have header signature: <code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">62 14 23 65</code>',
+        's2.enc.4': 'All encryption/decryption occurs in kernel memory \u2014 no plaintext temp files on disk',
+        's3.title': 'The Problem with Claude Code',
+        's3.intro': 'ESAFENET was designed for traditional desktop applications (Office, Visual Studio, AutoCAD). It does NOT natively support modern CLI development tools. Here\'s what breaks:',
+        's3.p1.title': 'Claude Code Can\'t Read Encrypted Files',
+        's3.p1.desc': 'Claude Code runs as <code class="bg-surface-100 px-1 rounded">node.exe</code>. If <code class="bg-surface-100 px-1 rounded">node.exe</code> is not in the process whitelist, it receives garbled binary data instead of source code.',
+        's3.p2.title': 'Files Written Lose Encryption',
+        's3.p2.desc': 'Files created by a non-whitelisted process are saved as unencrypted plaintext, violating security policy.',
+        's3.p3.title': 'Git Operations Fail',
+        's3.p3.desc': '<code class="bg-surface-100 px-1 rounded">git.exe</code> is typically not whitelisted, so commits, diffs, and merges produce corrupted results on encrypted files.',
+        's3.p4.title': 'Sub-Process Chain Breaks',
+        's3.p4.desc': 'Claude Code spawns git, shell, compilers, and linters as sub-processes. Each one needs whitelisting or it fails on encrypted files.',
+        's4.title': 'Recommendations for IT Admins',
+        's4.a.tag': 'Recommended',
+        's4.a.title': 'Option A: Add Processes to Whitelist',
+        's4.a.desc': 'Log into the CDG Server management console and add the following processes to the transparent encryption policy\'s controlled process list (\u7b56\u7565\u7ba1\u7406 \u2192 \u900f\u660e\u52a0\u5bc6\u7b56\u7565 \u2192 \u53d7\u63a7\u8fdb\u7a0b):',
+        's4.a.th1': 'Process', 's4.a.th2': 'Why Needed', 's4.a.th3': 'File Extensions',
+        's4.a.node': 'Claude Code runtime, npm, build tools',
+        's4.a.git': 'Version control (diff, commit, merge)',
+        's4.a.bash': 'Shell operations spawned by Claude Code',
+        's4.a.cmd': 'Windows command prompt',
+        's4.a.ps': 'PowerShell scripting',
+        's4.a.py': 'Python scripts and tooling',
+        's4.b.title': 'Option B: Directory Exclusions',
+        's4.b.desc': 'Request that the following paths are excluded from encryption entirely (\u843d\u5730\u52a0\u89e3\u5bc6\u7b56\u7565 \u2192 \u8def\u5f84\u6392\u9664):',
+        's4.c.title': 'Option C: Developer Group Policy',
+        's4.c.desc': 'Create a separate organizational unit in CDG Server for developer workstations with a tailored encryption policy that:',
+        's4.c.1': 'Includes all development executables in the process whitelist',
+        's4.c.2': 'Covers all source code file extensions',
+        's4.c.3': 'Excludes development directories from forced encryption',
+        's4.c.4': 'Allows clipboard operations for code (removes character limits)',
+        's4.c.note': 'This provides the most comprehensive solution without weakening security for non-developer departments.',
+        's4.d.title': 'Option D: Switch to Intelligent Encryption Mode',
+        's4.d.desc': 'If possible, switch developer machines from forced transparent encryption to intelligent encryption mode (\u667a\u80fd\u52a0\u5bc6). In this mode, only files detected as containing sensitive content are encrypted, leaving most source code freely accessible to all tools.',
+        's5.title': 'Verification Steps',
+        's5.intro': 'After IT applies the policy changes, developers should verify:',
+        's5.v1.title': 'Claude Code can read project files',
+        's5.v1.desc': 'Open Claude Code in a project directory and ask it to summarize a source file. It should return readable code, not garbled binary.',
+        's5.v2.title': 'Claude Code can write files',
+        's5.v2.desc': 'Ask Claude Code to create or modify a file. Verify the saved file can still be opened by other whitelisted applications and remains encrypted on disk.',
+        's5.v3.title': 'Git operations work correctly',
+        's5.v3.desc': 'Run git diff and git log -p \u2014 output should show readable diffs, not encrypted binary.',
+        's5.v4.title': 'Encryption is maintained',
+        's5.v4.desc': 'Check a file\'s encryption status with a hex editor \u2014 encrypted files start with <code class="bg-surface-100 px-1 rounded">62 14 23 65</code>. Verify files aren\'t accidentally saved as plaintext.',
+        's6.title': 'Quick Reference for IT',
+        's6.th1': 'Item', 's6.th2': 'Details',
+        's6.r1': 'CDG Admin Path', 's6.r2': 'Process Whitelist Location', 's6.r2v': 'Transparent Encryption \u2192 Controlled Processes',
+        's6.r3': 'Required Processes', 's6.r4': 'Key Extensions', 's6.r5': 'Exclude Dirs', 's6.r6': 'Encrypted File Signature',
+        's6.r7': 'Admin Roles Required', 's6.r7v': 'System Administrator or Security Administrator',
+        's7.title': 'Known Issues & Limitations',
+        's7.q1': 'Clipboard paste limited to <50 characters',
+        's7.a1': 'Some ESAFENET configurations restrict clipboard operations for controlled processes. Ask IT to increase or remove the clipboard character limit for developer tools in the CDG policy settings.',
+        's7.q2': 'Performance degradation on large projects',
+        's7.a2': 'The kernel-level I/O interception adds overhead to every file read/write. For large projects, request that node_modules/ and .git/ directories are excluded from encryption to significantly reduce overhead.',
+        's7.q3': 'WSL (Windows Subsystem for Linux) compatibility',
+        's7.a3': "ESAFENET's Windows kernel driver does not intercept I/O from WSL Linux processes. Files accessed via WSL may bypass encryption entirely. Check with IT security before using WSL with encrypted projects.",
+        's7.q4': 'New file extensions not covered',
+        's7.a4': 'If you work with uncommon file types (<code class="bg-surface-100 px-1 rounded">.svelte</code>, <code class="bg-surface-100 px-1 rounded">.astro</code>, <code class="bg-surface-100 px-1 rounded">.rs</code>, <code class="bg-surface-100 px-1 rounded">.go</code>, etc.), request IT to add them to the extension list for your whitelisted processes.',
+        'footer.updated': 'Last updated: March 2026 \u00b7 Internal use only',
+        'footer.back': 'Back to Setup Guide',
+        'copy.toast': 'Copied to clipboard',
+      },
+      zh: {
+        'nav.back': '\u8fd4\u56de\u8bbe\u7f6e\u6307\u5357',
+        'hero.badge': '\u9700\u8981 IT \u7ba1\u7406\u5458\u64cd\u4f5c',
+        'hero.title1': '\u4ebf\u8d5b\u901a\u52a0\u5bc6',
+        'hero.title2': '\u517c\u5bb9\u6027\u6307\u5357',
+        'hero.desc': '\u5982\u4f55\u914d\u7f6e <strong class="text-white">\u4ebf\u8d5b\u901a (ESAFENET) CDG</strong> \u900f\u660e\u52a0\u5bc6\u4ee5\u4e0e Claude Code \u548c\u73b0\u4ee3 CLI \u5f00\u53d1\u5de5\u5177\u517c\u5bb9\u3002',
+        's1.title': '\u4ec0\u4e48\u662f\u4ebf\u8d5b\u901a\uff1f',
+        's1.p1': '<strong>\u4ebf\u8d5b\u901a (ESAFENET)</strong> CDG \u662f\u4e00\u5957\u4f01\u4e1a\u7ea7\u6570\u636e\u9632\u6cc4\u6f0f (DLP) \u7cfb\u7edf\uff0c\u4f7f\u7528<strong>\u900f\u660e\u52a0\u5bc6</strong>\u6280\u672f\u5728\u5185\u6838\u9a71\u52a8\u5c42\u81ea\u52a8\u52a0\u5bc6\u6587\u4ef6\u3002\u5e7f\u6cdb\u7528\u4e8e\u4e2d\u56fd\u4f01\u4e1a\u4fdd\u62a4\u6e90\u4ee3\u7801\u3001\u8bbe\u8ba1\u6587\u6863\u548c\u4e13\u6709\u6570\u636e\u3002',
+        's1.card1.title': '\u900f\u660e\u52a0\u5bc6',
+        's1.card1.desc': '\u6587\u4ef6\u7531\u5185\u6838\u9a71\u52a8\u81ea\u52a8\u52a0\u5bc6/\u89e3\u5bc6\u3002\u767d\u540d\u5355\u5e94\u7528\u4e2d\u7528\u6237\u770b\u5230\u6b63\u5e38\u6587\u4ef6\u3002',
+        's1.card2.title': '\u8fdb\u7a0b\u7ed1\u5b9a',
+        's1.card2.desc': '\u53ea\u6709\u767d\u540d\u5355\u4e2d\u7684\u53ef\u6267\u884c\u6587\u4ef6\u624d\u80fd\u8bfb\u5199\u52a0\u5bc6\u6587\u4ef6\u3002\u5176\u4ed6\u8fdb\u7a0b\u770b\u5230\u7684\u662f\u4e71\u7801\u3002',
+        's1.card3.title': '\u96c6\u4e2d\u7ba1\u7406',
+        's1.card3.desc': 'CDG \u670d\u52a1\u5668\u63a7\u5236\u7b56\u7565\u3001\u7528\u6237\u7ec4\u3001\u6587\u4ef6\u6269\u5c55\u540d\u548c\u5ba1\u6279\u6d41\u7a0b\u3002',
+        's2.title': '\u5de5\u4f5c\u539f\u7406\uff08\u6280\u672f\u8be6\u60c5\uff09',
+        's2.intro': '\u6bcf\u4e2a\u7ec8\u7aef\u5b89\u88c5\u4e09\u4e2a\u7ec4\u4ef6\uff1a',
+        's2.th1': '\u7ec4\u4ef6', 's2.th2': '\u7528\u9014',
+        's2.r1': '\u4e3b\u8fdb\u7a0b\uff1aGUI\u3001\u52a0\u5bc6\u7b56\u7565\u66f4\u65b0\u3001\u7528\u6237\u8ba4\u8bc1',
+        's2.r2': '\u770b\u95e8\u72d7\uff1a\u76d1\u63a7\u5e76\u5728\u4e3b\u8fdb\u7a0b\u88ab\u7ec8\u6b62\u65f6\u81ea\u52a8\u91cd\u542f',
+        's2.r3': '\u5185\u6838\u9a71\u52a8\uff1a\u62e6\u622a\u6587\u4ef6 I/O \u8fdb\u884c\u5b9e\u65f6\u52a0\u5bc6/\u89e3\u5bc6',
+        's2.key': '<strong>\u6838\u5fc3\u6982\u5ff5\uff1a</strong><code class="bg-blue-100 px-1 rounded">Filelock.sys</code> \u5185\u6838\u9a71\u52a8\u62e6\u622a\u6240\u6709\u6587\u4ef6\u8bfb\u5199\u64cd\u4f5c\u3002\u52a0\u5bc6\u548c\u89e3\u5bc6<strong>\u4ec5\u5728</strong>\u540c\u65f6\u6ee1\u8db3\u4e24\u4e2a\u6761\u4ef6\u65f6\u89e6\u53d1\uff1a(1) \u8c03\u7528\u8fdb\u7a0b\u5728\u767d\u540d\u5355\u4e2d\uff0c\u4e14 (2) \u6587\u4ef6\u6269\u5c55\u540d\u5339\u914d\u8be5\u8fdb\u7a0b\u7684\u6279\u51c6\u5217\u8868\u3002\u5982\u679c\u8fdb\u7a0b\u4e0d\u5728\u767d\u540d\u5355\u4e2d\uff0c\u5b83\u770b\u5230\u7684\u662f\u539f\u59cb\u52a0\u5bc6\u4e8c\u8fdb\u5236\u6570\u636e\u3002',
+        's2.enc.title': '\u52a0\u5bc6\u65b9\u6cd5',
+        's2.enc.1': 'AES \u5bf9\u79f0\u52a0\u5bc6\u7528\u4e8e\u6587\u4ef6\u5185\u5bb9\uff08\u6bcf\u4e2a\u6587\u4ef6\u968f\u673a\u5bc6\u94a5\uff09',
+        's2.enc.2': 'RSA \u975e\u5bf9\u79f0\u52a0\u5bc6\u5305\u88c5 AES \u5bc6\u94a5',
+        's2.enc.3': '\u52a0\u5bc6\u6587\u4ef6\u5934\u90e8\u7279\u5f81\uff1a<code class="bg-surface-100 px-1.5 py-0.5 rounded text-xs">62 14 23 65</code>',
+        's2.enc.4': '\u6240\u6709\u52a0\u5bc6/\u89e3\u5bc6\u5728\u5185\u6838\u5185\u5b58\u4e2d\u8fdb\u884c \u2014 \u78c1\u76d8\u4e0a\u4e0d\u4f1a\u4ea7\u751f\u660e\u6587\u4e34\u65f6\u6587\u4ef6',
+        's3.title': 'Claude Code \u7684\u517c\u5bb9\u6027\u95ee\u9898',
+        's3.intro': '\u4ebf\u8d5b\u901a\u662f\u4e3a\u4f20\u7edf\u684c\u9762\u5e94\u7528\uff08Office\u3001Visual Studio\u3001AutoCAD\uff09\u8bbe\u8ba1\u7684\u3002\u5b83\u4e0d\u539f\u751f\u652f\u6301\u73b0\u4ee3 CLI \u5f00\u53d1\u5de5\u5177\u3002\u4ee5\u4e0b\u662f\u4f1a\u51fa\u73b0\u7684\u95ee\u9898\uff1a',
+        's3.p1.title': 'Claude Code \u65e0\u6cd5\u8bfb\u53d6\u52a0\u5bc6\u6587\u4ef6',
+        's3.p1.desc': 'Claude Code \u4ee5 <code class="bg-surface-100 px-1 rounded">node.exe</code> \u8fd0\u884c\u3002\u5982\u679c <code class="bg-surface-100 px-1 rounded">node.exe</code> \u4e0d\u5728\u8fdb\u7a0b\u767d\u540d\u5355\u4e2d\uff0c\u5b83\u63a5\u6536\u5230\u7684\u662f\u4e71\u7801\u800c\u4e0d\u662f\u6e90\u4ee3\u7801\u3002',
+        's3.p2.title': '\u5199\u5165\u7684\u6587\u4ef6\u5931\u53bb\u52a0\u5bc6',
+        's3.p2.desc': '\u975e\u767d\u540d\u5355\u8fdb\u7a0b\u521b\u5efa\u7684\u6587\u4ef6\u4f1a\u4ee5\u672a\u52a0\u5bc6\u660e\u6587\u4fdd\u5b58\uff0c\u8fdd\u53cd\u5b89\u5168\u7b56\u7565\u3002',
+        's3.p3.title': 'Git \u64cd\u4f5c\u5931\u8d25',
+        's3.p3.desc': '<code class="bg-surface-100 px-1 rounded">git.exe</code> \u901a\u5e38\u4e0d\u5728\u767d\u540d\u5355\u4e2d\uff0c\u56e0\u6b64\u63d0\u4ea4\u3001\u5dee\u5f02\u5bf9\u6bd4\u548c\u5408\u5e76\u4f1a\u5728\u52a0\u5bc6\u6587\u4ef6\u4e0a\u4ea7\u751f\u635f\u574f\u7684\u7ed3\u679c\u3002',
+        's3.p4.title': '\u5b50\u8fdb\u7a0b\u94fe\u4e2d\u65ad',
+        's3.p4.desc': 'Claude Code \u4f1a\u542f\u52a8 git\u3001shell\u3001\u7f16\u8bd1\u5668\u548c\u68c0\u67e5\u5de5\u5177\u4f5c\u4e3a\u5b50\u8fdb\u7a0b\u3002\u6bcf\u4e2a\u90fd\u9700\u8981\u52a0\u5165\u767d\u540d\u5355\uff0c\u5426\u5219\u65e0\u6cd5\u5904\u7406\u52a0\u5bc6\u6587\u4ef6\u3002',
+        's4.title': 'IT \u7ba1\u7406\u5458\u5efa\u8bae',
+        's4.a.tag': '\u63a8\u8350',
+        's4.a.title': '\u65b9\u6848 A\uff1a\u5c06\u8fdb\u7a0b\u6dfb\u52a0\u5230\u767d\u540d\u5355',
+        's4.a.desc': '\u767b\u5f55 CDG \u670d\u52a1\u5668\u7ba1\u7406\u63a7\u5236\u53f0\uff0c\u5c06\u4ee5\u4e0b\u8fdb\u7a0b\u6dfb\u52a0\u5230\u900f\u660e\u52a0\u5bc6\u7b56\u7565\u7684\u53d7\u63a7\u8fdb\u7a0b\u5217\u8868\uff08\u7b56\u7565\u7ba1\u7406 \u2192 \u900f\u660e\u52a0\u5bc6\u7b56\u7565 \u2192 \u53d7\u63a7\u8fdb\u7a0b\uff09\uff1a',
+        's4.a.th1': '\u8fdb\u7a0b', 's4.a.th2': '\u7528\u9014', 's4.a.th3': '\u6587\u4ef6\u6269\u5c55\u540d',
+        's4.a.node': 'Claude Code \u8fd0\u884c\u65f6\u3001npm\u3001\u6784\u5efa\u5de5\u5177',
+        's4.a.git': '\u7248\u672c\u63a7\u5236\uff08diff\u3001commit\u3001merge\uff09',
+        's4.a.bash': 'Claude Code \u542f\u52a8\u7684 Shell \u64cd\u4f5c',
+        's4.a.cmd': 'Windows \u547d\u4ee4\u63d0\u793a\u7b26',
+        's4.a.ps': 'PowerShell \u811a\u672c',
+        's4.a.py': 'Python \u811a\u672c\u548c\u5de5\u5177',
+        's4.b.title': '\u65b9\u6848 B\uff1a\u76ee\u5f55\u6392\u9664',
+        's4.b.desc': '\u8bf7\u6c42\u5c06\u4ee5\u4e0b\u8def\u5f84\u5b8c\u5168\u6392\u9664\u5728\u52a0\u5bc6\u4e4b\u5916\uff08\u843d\u5730\u52a0\u89e3\u5bc6\u7b56\u7565 \u2192 \u8def\u5f84\u6392\u9664\uff09\uff1a',
+        's4.c.title': '\u65b9\u6848 C\uff1a\u5f00\u53d1\u8005\u7ec4\u7b56\u7565',
+        's4.c.desc': '\u5728 CDG \u670d\u52a1\u5668\u4e2d\u4e3a\u5f00\u53d1\u8005\u5de5\u4f5c\u7ad9\u521b\u5efa\u5355\u72ec\u7684\u7ec4\u7ec7\u5355\u5143\uff0c\u914d\u7f6e\u5b9a\u5236\u7684\u52a0\u5bc6\u7b56\u7565\uff1a',
+        's4.c.1': '\u5c06\u6240\u6709\u5f00\u53d1\u53ef\u6267\u884c\u6587\u4ef6\u52a0\u5165\u8fdb\u7a0b\u767d\u540d\u5355',
+        's4.c.2': '\u8986\u76d6\u6240\u6709\u6e90\u4ee3\u7801\u6587\u4ef6\u6269\u5c55\u540d',
+        's4.c.3': '\u5c06\u5f00\u53d1\u76ee\u5f55\u6392\u9664\u5728\u5f3a\u5236\u52a0\u5bc6\u4e4b\u5916',
+        's4.c.4': '\u5141\u8bb8\u4ee3\u7801\u7684\u526a\u8d34\u677f\u64cd\u4f5c\uff08\u53d6\u6d88\u5b57\u7b26\u9650\u5236\uff09',
+        's4.c.note': '\u8fd9\u63d0\u4f9b\u4e86\u6700\u5168\u9762\u7684\u89e3\u51b3\u65b9\u6848\uff0c\u4e0d\u4f1a\u524a\u5f31\u975e\u5f00\u53d1\u90e8\u95e8\u7684\u5b89\u5168\u6027\u3002',
+        's4.d.title': '\u65b9\u6848 D\uff1a\u5207\u6362\u5230\u667a\u80fd\u52a0\u5bc6\u6a21\u5f0f',
+        's4.d.desc': '\u5982\u679c\u53ef\u80fd\uff0c\u5c06\u5f00\u53d1\u8005\u673a\u5668\u4ece\u5f3a\u5236\u900f\u660e\u52a0\u5bc6\u5207\u6362\u5230\u667a\u80fd\u52a0\u5bc6\u6a21\u5f0f\uff08\u667a\u80fd\u52a0\u5bc6\uff09\u3002\u5728\u6b64\u6a21\u5f0f\u4e0b\uff0c\u53ea\u6709\u68c0\u6d4b\u5230\u5305\u542b\u654f\u611f\u5185\u5bb9\u7684\u6587\u4ef6\u624d\u4f1a\u88ab\u52a0\u5bc6\uff0c\u5927\u591a\u6570\u6e90\u4ee3\u7801\u53ef\u81ea\u7531\u8bbf\u95ee\u3002',
+        's5.title': '\u9a8c\u8bc1\u6b65\u9aa4',
+        's5.intro': 'IT \u5e94\u7528\u7b56\u7565\u66f4\u6539\u540e\uff0c\u5f00\u53d1\u8005\u5e94\u9a8c\u8bc1\uff1a',
+        's5.v1.title': 'Claude Code \u53ef\u4ee5\u8bfb\u53d6\u9879\u76ee\u6587\u4ef6',
+        's5.v1.desc': '\u5728\u9879\u76ee\u76ee\u5f55\u4e2d\u6253\u5f00 Claude Code\uff0c\u8ba9\u5b83\u603b\u7ed3\u4e00\u4e2a\u6e90\u6587\u4ef6\u3002\u5e94\u8be5\u8fd4\u56de\u53ef\u8bfb\u4ee3\u7801\uff0c\u800c\u4e0d\u662f\u4e71\u7801\u3002',
+        's5.v2.title': 'Claude Code \u53ef\u4ee5\u5199\u5165\u6587\u4ef6',
+        's5.v2.desc': '\u8ba9 Claude Code \u521b\u5efa\u6216\u4fee\u6539\u6587\u4ef6\u3002\u9a8c\u8bc1\u4fdd\u5b58\u7684\u6587\u4ef6\u4ecd\u53ef\u7531\u5176\u4ed6\u767d\u540d\u5355\u5e94\u7528\u6253\u5f00\uff0c\u5e76\u4e14\u78c1\u76d8\u4e0a\u4fdd\u6301\u52a0\u5bc6\u3002',
+        's5.v3.title': 'Git \u64cd\u4f5c\u6b63\u5e38\u5de5\u4f5c',
+        's5.v3.desc': '\u8fd0\u884c git diff \u548c git log -p \u2014 \u8f93\u51fa\u5e94\u663e\u793a\u53ef\u8bfb\u7684\u5dee\u5f02\uff0c\u800c\u4e0d\u662f\u52a0\u5bc6\u4e8c\u8fdb\u5236\u3002',
+        's5.v4.title': '\u52a0\u5bc6\u5f97\u5230\u4fdd\u6301',
+        's5.v4.desc': '\u7528\u5341\u516d\u8fdb\u5236\u7f16\u8f91\u5668\u68c0\u67e5\u6587\u4ef6\u52a0\u5bc6\u72b6\u6001 \u2014 \u52a0\u5bc6\u6587\u4ef6\u4ee5 <code class="bg-surface-100 px-1 rounded">62 14 23 65</code> \u5f00\u5934\u3002\u9a8c\u8bc1\u6587\u4ef6\u6ca1\u6709\u88ab\u610f\u5916\u4fdd\u5b58\u4e3a\u660e\u6587\u3002',
+        's6.title': 'IT \u5feb\u901f\u53c2\u8003',
+        's6.th1': '\u9879\u76ee', 's6.th2': '\u8be6\u60c5',
+        's6.r1': 'CDG \u7ba1\u7406\u8def\u5f84', 's6.r2': '\u8fdb\u7a0b\u767d\u540d\u5355\u4f4d\u7f6e', 's6.r2v': '\u900f\u660e\u52a0\u5bc6 \u2192 \u53d7\u63a7\u8fdb\u7a0b',
+        's6.r3': '\u6240\u9700\u8fdb\u7a0b', 's6.r4': '\u5173\u952e\u6269\u5c55\u540d', 's6.r5': '\u6392\u9664\u76ee\u5f55', 's6.r6': '\u52a0\u5bc6\u6587\u4ef6\u7279\u5f81',
+        's6.r7': '\u6240\u9700\u7ba1\u7406\u5458\u89d2\u8272', 's6.r7v': '\u7cfb\u7edf\u7ba1\u7406\u5458\u6216\u5b89\u5168\u7ba1\u7406\u5458',
+        's7.title': '\u5df2\u77e5\u95ee\u9898\u548c\u9650\u5236',
+        's7.q1': '\u526a\u8d34\u677f\u7c98\u8d34\u9650\u5236\u4e3a50\u4e2a\u5b57\u7b26\u4ee5\u4e0b',
+        's7.a1': '\u67d0\u4e9b\u4ebf\u8d5b\u901a\u914d\u7f6e\u4f1a\u9650\u5236\u53d7\u63a7\u8fdb\u7a0b\u7684\u526a\u8d34\u677f\u64cd\u4f5c\u3002\u8bf7 IT \u5728 CDG \u7b56\u7565\u8bbe\u7f6e\u4e2d\u589e\u52a0\u6216\u53d6\u6d88\u5f00\u53d1\u5de5\u5177\u7684\u526a\u8d34\u677f\u5b57\u7b26\u9650\u5236\u3002',
+        's7.q2': '\u5927\u578b\u9879\u76ee\u6027\u80fd\u4e0b\u964d',
+        's7.a2': '\u5185\u6838\u7ea7 I/O \u62e6\u622a\u4f1a\u589e\u52a0\u6bcf\u6b21\u6587\u4ef6\u8bfb\u5199\u7684\u5f00\u9500\u3002\u5bf9\u4e8e\u5927\u578b\u9879\u76ee\uff0c\u8bf7\u6c42\u5c06 node_modules/ \u548c .git/ \u76ee\u5f55\u6392\u9664\u5728\u52a0\u5bc6\u4e4b\u5916\uff0c\u4ee5\u663e\u8457\u51cf\u5c11\u5f00\u9500\u3002',
+        's7.q3': 'WSL\uff08Windows Linux \u5b50\u7cfb\u7edf\uff09\u517c\u5bb9\u6027',
+        's7.a3': '\u4ebf\u8d5b\u901a\u7684 Windows \u5185\u6838\u9a71\u52a8\u4e0d\u4f1a\u62e6\u622a WSL Linux \u8fdb\u7a0b\u7684 I/O\u3002\u901a\u8fc7 WSL \u8bbf\u95ee\u7684\u6587\u4ef6\u53ef\u80fd\u5b8c\u5168\u7ed5\u8fc7\u52a0\u5bc6\u3002\u4f7f\u7528 WSL \u5904\u7406\u52a0\u5bc6\u9879\u76ee\u524d\u8bf7\u54a8\u8be2 IT \u5b89\u5168\u90e8\u95e8\u3002',
+        's7.q4': '\u672a\u8986\u76d6\u7684\u65b0\u6587\u4ef6\u6269\u5c55\u540d',
+        's7.a4': '\u5982\u679c\u60a8\u4f7f\u7528\u4e0d\u5e38\u89c1\u7684\u6587\u4ef6\u7c7b\u578b\uff08<code class="bg-surface-100 px-1 rounded">.svelte</code>\u3001<code class="bg-surface-100 px-1 rounded">.astro</code>\u3001<code class="bg-surface-100 px-1 rounded">.rs</code>\u3001<code class="bg-surface-100 px-1 rounded">.go</code> \u7b49\uff09\uff0c\u8bf7 IT \u5c06\u5176\u6dfb\u52a0\u5230\u767d\u540d\u5355\u8fdb\u7a0b\u7684\u6269\u5c55\u540d\u5217\u8868\u4e2d\u3002',
+        'footer.updated': '\u6700\u540e\u66f4\u65b0\uff1a2026\u5e743\u6708 \u00b7 \u4ec5\u4f9b\u5185\u90e8\u4f7f\u7528',
+        'footer.back': '\u8fd4\u56de\u8bbe\u7f6e\u6307\u5357',
+        'copy.toast': '\u5df2\u590d\u5236\u5230\u526a\u8d34\u677f',
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      localStorage.setItem('sei-lang', currentLang);
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[currentLang][key] !== undefined) el.textContent = i18n[currentLang][key];
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (i18n[currentLang][key] !== undefined) el.innerHTML = i18n[currentLang][key];
+      });
+      const label = currentLang === 'en' ? 'EN | \u4e2d\u6587' : '\u4e2d\u6587 | EN';
+      const heroLabel = document.getElementById('lang-hero-label');
+      const stickyLabel = document.getElementById('lang-sticky-label');
+      if (heroLabel) heroLabel.textContent = label;
+      if (stickyLabel) stickyLabel.textContent = label;
+    }
+
+    function copyFromBlock(block) {
+      const code = block.querySelector('code').innerText;
+      const btn = block.querySelector('.copy-btn');
+      navigator.clipboard.writeText(code).then(() => {
+        if (btn) {
+          btn.classList.add('copied');
+          const label = btn.querySelector('span');
+          if (label) label.textContent = currentLang === 'zh' ? '\u5df2\u590d\u5236!' : 'Copied!';
+          btn.classList.add('bg-green-600');
+          btn.classList.remove('bg-surface-700');
+          setTimeout(() => {
+            btn.classList.remove('copied', 'bg-green-600');
+            btn.classList.add('bg-surface-700');
+            if (label) label.textContent = currentLang === 'zh' ? '\u590d\u5236' : 'Copy';
+          }, 1500);
+        }
+        const toast = document.getElementById('copy-toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1800);
+      });
+    }
+
+    const backToTop = document.getElementById('back-to-top');
+    const langSticky = document.getElementById('lang-sticky');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y > 400) { backToTop.classList.add('visible'); langSticky.classList.add('visible'); }
+      else { backToTop.classList.remove('visible'); langSticky.classList.remove('visible'); }
+    }, { passive: true });
+
+    document.addEventListener('DOMContentLoaded', applyLanguage);
+  </script>
+
+</body>
+</html>

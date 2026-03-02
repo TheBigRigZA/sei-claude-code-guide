@@ -749,6 +749,20 @@ claude</code></pre>
           </div>
         </details>
 
+        <details class="group">
+          <summary class="flex items-center justify-between p-5 hover:bg-surface-50 transition">
+            <span class="font-semibold text-surface-900" data-i18n="trouble.esafenet">ESAFENET (亿赛通) encryption blocking Claude Code</span>
+            <span class="chevron text-surface-400 text-sm ml-2">&#9654;</span>
+          </summary>
+          <div class="px-5 pb-5 text-sm text-surface-600 space-y-2">
+            <p data-i18n-html="trouble.esafenet.desc">ESAFENET CDG uses kernel-level transparent encryption that blocks <code class="bg-surface-100 px-1 rounded">node.exe</code> and <code class="bg-surface-100 px-1 rounded">git.exe</code> from reading encrypted source files. IT admins need to whitelist Claude Code processes.</p>
+            <a href="esafenet.html" class="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm font-semibold transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              <span data-i18n="trouble.esafenet.link">View full ESAFENET Compatibility Guide</span>
+            </a>
+          </div>
+        </details>
+
       </div>
     </section>
 
@@ -985,6 +999,9 @@ claude</code></pre>
         'trouble.notfound': '"claude" command not found',
         'trouble.env': 'Environment variables not being picked up',
         'trouble.proxy': 'Behind a corporate proxy',
+        'trouble.esafenet': 'ESAFENET (亿赛通) encryption blocking Claude Code',
+        'trouble.esafenet.desc': 'ESAFENET CDG uses kernel-level transparent encryption that blocks <code class="bg-surface-100 px-1 rounded">node.exe</code> and <code class="bg-surface-100 px-1 rounded">git.exe</code> from reading encrypted source files. IT admins need to whitelist Claude Code processes.',
+        'trouble.esafenet.link': 'View full ESAFENET Compatibility Guide',
         'dept.title': 'Department CLI Tools',
         'dept.desc': 'Curated command-line tools for each SEI Robotics department. Click any command to copy it.',
         'dept.tab.android': 'Android Source',
@@ -1065,8 +1082,11 @@ claude</code></pre>
         'trouble.credits': '"\u4f59\u989d\u4e0d\u8db3"\u6216\u901f\u7387\u9650\u5236\u9519\u8bef',
         'trouble.notfound': '\u627e\u4e0d\u5230 "claude" \u547d\u4ee4',
         'trouble.env': '\u73af\u5883\u53d8\u91cf\u672a\u751f\u6548',
-        'trouble.proxy': '\u4f4d\u4e8e\u4f01\u4e1a\u4ee3\u7406\u4e4b\u540e',
-        'dept.title': '\u90e8\u95e8 CLI \u5de5\u5177',
+        'trouble.proxy': '位于企业代理之后',
+        'trouble.esafenet': '亿赛通 (ESAFENET) 加密阻止 Claude Code',
+        'trouble.esafenet.desc': '亿赛通 CDG 使用内核级透明加密，会阻止 <code class="bg-surface-100 px-1 rounded">node.exe</code> 和 <code class="bg-surface-100 px-1 rounded">git.exe</code> 读取加密的源文件。IT 管理员需要将 Claude Code 进程加入白名单。',
+        'trouble.esafenet.link': '查看完整的亿赛通兼容性指南',
+        'dept.title': '部门 CLI 工具',
         'dept.desc': '\u4e3a SEI Robotics \u5404\u90e8\u95e8\u7cbe\u9009\u7684\u547d\u4ee4\u884c\u5de5\u5177\u3002\u70b9\u51fb\u4efb\u4f55\u547d\u4ee4\u5373\u53ef\u590d\u5236\u3002',
         'dept.tab.android': 'Android \u6e90\u7801',
         'dept.tab.apk': 'APK \u5de5\u5177',
