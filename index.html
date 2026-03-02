@@ -171,6 +171,15 @@
       transform: translateY(-1px);
     }
 
+    /* Scenario tabs */
+    .scenario-tab-content { display: none; }
+    .scenario-tab-content.active { display: block; }
+    .scenario-tab-btn.active {
+      border-color: #3b6cff;
+      color: #3b6cff;
+      background-color: #f0f5ff;
+    }
+
     /* Qwen chat */
     .qwen-messages {
       max-height: 500px;
@@ -257,6 +266,8 @@
       <nav class="mt-10 flex flex-wrap justify-center gap-3 no-print">
         <a href="#prerequisites" class="rounded-lg bg-brand-600 hover:bg-brand-500 px-5 py-2.5 text-sm font-semibold transition shadow-lg shadow-brand-600/25" data-i18n="hero.cta1">Get Started</a>
         <a href="#quick-ref" class="rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-2.5 text-sm font-semibold transition" data-i18n="hero.cta2">Quick Reference</a>
+        <a href="#scenarios" class="rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-2.5 text-sm font-semibold transition" data-i18n="hero.cta3">Getting Started Scenarios</a>
+        <a href="esafenet.html" class="rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-2.5 text-sm font-semibold transition" data-i18n="hero.cta4">ESAFENET Guide</a>
       </nav>
     </div>
   </header>
@@ -275,6 +286,7 @@
         <li><a href="#troubleshooting" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">6</span><span data-i18n="toc.6">Troubleshooting</span></a></li>
         <li><a href="#dept-tools" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">7</span><span data-i18n="toc.7">Department CLI Tools</span></a></li>
         <li><a href="#ai-assistant" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">8</span><span data-i18n="toc.8">AI Tool Recommendations</span></a></li>
+        <li><a href="#scenarios" class="flex items-center gap-2 text-brand-600 hover:text-brand-800 font-medium py-1 transition"><span class="flex items-center justify-center w-6 h-6 rounded-full bg-brand-100 text-brand-700 text-xs font-bold shrink-0">9</span><span data-i18n="toc.9">Getting Started Scenarios</span></a></li>
       </ol>
     </nav>
 
@@ -828,6 +840,323 @@ claude</code></pre>
       </div>
     </section>
 
+    <!-- ───────── GETTING STARTED SCENARIOS ───────── -->
+    <section id="scenarios">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-100 text-brand-700 font-bold text-lg">9</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-surface-900" data-i18n="scenario.title">Getting Started Scenarios</h2>
+      </div>
+      <p class="text-surface-600 mb-6" data-i18n="scenario.desc">Three common workflows for setting up a project with Claude Code and a CLAUDE.md file. Pick the scenario that matches your situation.</p>
+
+      <!-- Scenario Tabs -->
+      <div class="no-print flex flex-wrap border-b border-surface-200 mb-0 gap-1" role="tablist">
+        <button onclick="switchScenarioTab('new')" class="scenario-tab-btn active rounded-t-lg border border-b-0 border-surface-200 px-4 py-2 text-sm font-semibold transition" data-scenario-tab="new" data-i18n="scenario.tab.new">New Project</button>
+        <button onclick="switchScenarioTab('existing')" class="scenario-tab-btn rounded-t-lg border border-b-0 border-transparent px-4 py-2 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-scenario-tab="existing" data-i18n="scenario.tab.existing">Existing Codebase</button>
+        <button onclick="switchScenarioTab('gitlab')" class="scenario-tab-btn rounded-t-lg border border-b-0 border-transparent px-4 py-2 text-sm font-semibold text-surface-500 hover:text-surface-700 transition" data-scenario-tab="gitlab" data-i18n="scenario.tab.gitlab">Clone from GitLab</button>
+      </div>
+
+      <div class="rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8">
+
+        <!-- Tab 1: New Project -->
+        <div class="scenario-tab-content active" id="scenario-new">
+          <div class="space-y-5">
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">1</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.new.step1">Create your project directory</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>mkdir my-project &amp;&amp; cd my-project</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">2</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.new.step2">Initialize a git repository</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>git init</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">3</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.new.step3">Launch Claude Code</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>claude</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">4</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.new.step4">Paste the prompting framework into Claude Code</p>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.new.step4.desc">Copy the structured brief below, fill in your details, and paste it as your first message to Claude.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">5</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.new.step5">Ask Claude to generate a CLAUDE.md file</p>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.new.step5.desc">Claude will create a CLAUDE.md based on your project context.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">6</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.new.step6">Review and refine CLAUDE.md</p>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.new.step6.desc">Check the generated file, then ask Claude to adjust anything that's missing or incorrect.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">7</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.new.step7">Create a GitLab repo and push</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>git add -A
+git commit -m "Initial project setup with CLAUDE.md"
+git remote add origin https://gitlab.company.com/your-group/project-name.git
+git push -u origin main</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.new.step7.desc">Replace gitlab.company.com with your actual self-hosted GitLab hostname.</p>
+              </div>
+            </div>
+
+            <!-- Prompting Framework Card -->
+            <div class="rounded-xl bg-blue-50 border border-blue-200 p-5 mt-6">
+              <h4 class="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span data-i18n="scenario.framework.title">Prompting Framework for New Projects</span>
+              </h4>
+              <p class="text-sm text-blue-800 mb-3" data-i18n="scenario.framework.desc">Copy this template, fill in the bracketed fields, and paste it as your first message to Claude Code:</p>
+              <div class="code-block" onclick="copyFromBlock(this)">
+                <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm overflow-x-auto leading-relaxed"><code>I'm starting a new project. Here's the context:
+
+Project: [name]
+Department: [Android Source / APK Tools / Embedded Linux / Smart Devices / Cloud Engineering]
+Purpose: [one sentence — what does this project do?]
+Platform: [Android TV / Set-top box / Linux SBC / Cloud service / etc.]
+Languages: [Java / Kotlin / C / C++ / Python / Go / TypeScript / etc.]
+Framework: [AOSP / Buildroot / Spring Boot / FastAPI / React / etc.]
+Build system: [Gradle / Make / CMake / Bazel / npm / etc.]
+Key dependencies: [list main libraries or services]
+Team conventions: [e.g., comments in Chinese, commit messages in English, etc.]
+
+Please:
+1. Set up the initial project structure
+2. Create a CLAUDE.md file that captures all of the above
+3. Include build/run/test commands in CLAUDE.md</code></pre>
+                <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Existing Codebase -->
+        <div class="scenario-tab-content" id="scenario-existing">
+          <div class="space-y-5">
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">1</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.existing.step1">Navigate to your project folder</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>cd /path/to/your-project</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">2</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.existing.step2">Initialize git if not already a repo</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>git init</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.existing.step2.desc">Skip this if your project already has a .git directory.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">3</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.existing.step3">Launch Claude Code</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>claude</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">4</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.existing.step4">Ask Claude to analyze and generate CLAUDE.md</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm overflow-x-auto leading-relaxed"><code>Analyze this project and create a CLAUDE.md file. Include:
+- Project overview and tech stack
+- Build, run, and test commands
+- Project structure
+- Code conventions
+- Key dependencies
+- Deployment info</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">5</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.existing.step5">Review and refine CLAUDE.md</p>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.existing.step5.desc">Check the generated file and ask Claude to adjust anything that's missing or incorrect.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">6</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.existing.step6">Create a GitLab repo and push</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>git add CLAUDE.md
+git commit -m "Add CLAUDE.md project documentation"
+git remote add origin https://gitlab.company.com/your-group/project-name.git
+git push -u origin main</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.existing.step6.desc">Replace gitlab.company.com with your actual self-hosted GitLab hostname.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Clone from GitLab -->
+        <div class="scenario-tab-content" id="scenario-gitlab">
+          <div class="space-y-5">
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">1</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.gitlab.step1">Clone the repository from GitLab</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>git clone https://gitlab.company.com/your-group/project-name.git</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+                <p class="text-sm text-surface-500 mt-1" data-i18n="scenario.gitlab.step1.desc">Replace gitlab.company.com with your actual self-hosted GitLab hostname.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">2</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.gitlab.step2">Enter the project directory</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>cd project-name</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">3</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.gitlab.step3">Launch Claude Code</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>claude</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">4</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.gitlab.step4">Ask Claude to analyze and create CLAUDE.md</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm overflow-x-auto leading-relaxed"><code>Analyze this project and create a CLAUDE.md file. Include:
+- Project overview and tech stack
+- Build, run, and test commands
+- Project structure
+- Code conventions
+- Key dependencies
+- Deployment info</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700 font-bold text-sm shrink-0 mt-0.5">5</span>
+              <div class="min-w-0 flex-1">
+                <p class="font-medium text-surface-900" data-i18n="scenario.gitlab.step5">Commit and push CLAUDE.md</p>
+                <div class="code-block mt-2" onclick="copyFromBlock(this)">
+                  <pre class="bg-surface-900 text-green-400 rounded-lg p-3 pr-16 text-sm overflow-x-auto"><code>git add CLAUDE.md
+git commit -m "Add CLAUDE.md project documentation"
+git push</code></pre>
+                  <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Shared: SEI CLAUDE.md Template -->
+      <details class="mt-6 rounded-2xl border border-surface-200 bg-white shadow-sm overflow-hidden">
+        <summary class="flex items-center gap-3 p-5 cursor-pointer hover:bg-surface-50 transition">
+          <span class="chevron text-surface-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </span>
+          <h4 class="font-semibold text-surface-900" data-i18n="scenario.template.title">SEI CLAUDE.md Template</h4>
+        </summary>
+        <div class="px-5 pb-5">
+          <p class="text-sm text-surface-500 mb-3" data-i18n="scenario.template.desc">Use this as a starting point when creating your CLAUDE.md file:</p>
+          <div class="code-block" onclick="copyFromBlock(this)">
+            <pre class="bg-surface-900 text-green-400 rounded-lg p-4 pr-16 text-sm overflow-x-auto leading-relaxed"><code># Project Name
+
+## Overview
+Brief description of what this project does and which SEI Robotics department owns it.
+
+## Tech Stack
+- **Language**:
+- **Framework**:
+- **Build System**:
+- **Target Platform**:
+
+## Getting Started
+### Prerequisites
+### Build
+### Run
+### Test
+
+## Project Structure
+Key directories and what they contain.
+
+## Code Conventions
+- Comment language: [Chinese / English / both]
+- Naming: [camelCase / snake_case / etc.]
+- Commit messages: [language, format]
+- Branch naming: [feature/xxx, bugfix/xxx]
+
+## Key Dependencies
+| Package | Version | Purpose |
+|---------|---------|---------|
+
+## Deployment
+How and where this project is deployed.
+
+## Team
+- Department:
+- GitLab group:
+- Maintainers:
+
+## Claude Code Notes
+Special instructions for Claude Code when working on this project.
+- Preferred models/tools
+- Files to never modify
+- Testing requirements before commits</code></pre>
+            <button onclick="event.stopPropagation(); copyFromBlock(this.parentElement)" class="copy-btn absolute top-2 right-2 flex items-center gap-1.5 bg-surface-700 hover:bg-surface-600 text-white rounded-md px-2 py-1 text-xs font-medium" title="Copy to clipboard"><svg class="icon-copy w-3.5 h-3.5 absolute" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-width="2"/></svg><svg class="icon-check w-3.5 h-3.5 absolute text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span class="ml-5" data-i18n="copy.btn">Copy</span></button>
+          </div>
+        </div>
+      </details>
+    </section>
+
     <!-- ───────── QUICK REFERENCE ───────── -->
     <section id="quick-ref">
       <div class="flex items-center gap-3 mb-6">
@@ -1037,6 +1366,44 @@ claude</code></pre>
         'ai.error.network': 'Network error. Please check your connection and try again.',
         'ai.error.auth': 'Invalid API key. Please check your OpenRouter key.',
         'ai.error.rate': 'Rate limited. Please wait a moment and try again.',
+        'hero.cta3': 'Getting Started Scenarios',
+        'hero.cta4': 'ESAFENET Guide',
+        'toc.9': 'Getting Started Scenarios',
+        'scenario.title': 'Getting Started Scenarios',
+        'scenario.desc': 'Three common workflows for setting up a project with Claude Code and a CLAUDE.md file. Pick the scenario that matches your situation.',
+        'scenario.tab.new': 'New Project',
+        'scenario.tab.existing': 'Existing Codebase',
+        'scenario.tab.gitlab': 'Clone from GitLab',
+        'scenario.new.step1': 'Create your project directory',
+        'scenario.new.step2': 'Initialize a git repository',
+        'scenario.new.step3': 'Launch Claude Code',
+        'scenario.new.step4': 'Paste the prompting framework into Claude Code',
+        'scenario.new.step4.desc': 'Copy the structured brief below, fill in your details, and paste it as your first message to Claude.',
+        'scenario.new.step5': 'Ask Claude to generate a CLAUDE.md file',
+        'scenario.new.step5.desc': 'Claude will create a CLAUDE.md based on your project context.',
+        'scenario.new.step6': 'Review and refine CLAUDE.md',
+        'scenario.new.step6.desc': "Check the generated file, then ask Claude to adjust anything that's missing or incorrect.",
+        'scenario.new.step7': 'Create a GitLab repo and push',
+        'scenario.new.step7.desc': 'Replace gitlab.company.com with your actual self-hosted GitLab hostname.',
+        'scenario.existing.step1': 'Navigate to your project folder',
+        'scenario.existing.step2': 'Initialize git if not already a repo',
+        'scenario.existing.step2.desc': 'Skip this if your project already has a .git directory.',
+        'scenario.existing.step3': 'Launch Claude Code',
+        'scenario.existing.step4': 'Ask Claude to analyze and generate CLAUDE.md',
+        'scenario.existing.step5': 'Review and refine CLAUDE.md',
+        'scenario.existing.step5.desc': "Check the generated file and ask Claude to adjust anything that's missing or incorrect.",
+        'scenario.existing.step6': 'Create a GitLab repo and push',
+        'scenario.existing.step6.desc': 'Replace gitlab.company.com with your actual self-hosted GitLab hostname.',
+        'scenario.gitlab.step1': 'Clone the repository from GitLab',
+        'scenario.gitlab.step1.desc': 'Replace gitlab.company.com with your actual self-hosted GitLab hostname.',
+        'scenario.gitlab.step2': 'Enter the project directory',
+        'scenario.gitlab.step3': 'Launch Claude Code',
+        'scenario.gitlab.step4': 'Ask Claude to analyze and create CLAUDE.md',
+        'scenario.gitlab.step5': 'Commit and push CLAUDE.md',
+        'scenario.framework.title': 'Prompting Framework for New Projects',
+        'scenario.framework.desc': 'Copy this template, fill in the bracketed fields, and paste it as your first message to Claude Code:',
+        'scenario.template.title': 'SEI CLAUDE.md Template',
+        'scenario.template.desc': 'Use this as a starting point when creating your CLAUDE.md file:',
       },
       zh: {
         'hero.badge': '\u5185\u90e8\u5458\u5de5\u6307\u5357',
@@ -1121,6 +1488,44 @@ claude</code></pre>
         'ai.error.network': '\u7f51\u7edc\u9519\u8bef\u3002\u8bf7\u68c0\u67e5\u8fde\u63a5\u5e76\u91cd\u8bd5\u3002',
         'ai.error.auth': 'API \u5bc6\u94a5\u65e0\u6548\u3002\u8bf7\u68c0\u67e5\u60a8\u7684 OpenRouter \u5bc6\u94a5\u3002',
         'ai.error.rate': '\u8bf7\u6c42\u88ab\u9650\u6d41\u3002\u8bf7\u7a0d\u7b49\u7247\u523b\u540e\u91cd\u8bd5\u3002',
+        'hero.cta3': '\u5feb\u901f\u4e0a\u624b\u573a\u666f',
+        'hero.cta4': '\u4ebf\u8d5b\u901a\u6307\u5357',
+        'toc.9': '\u5feb\u901f\u4e0a\u624b\u573a\u666f',
+        'scenario.title': '\u5feb\u901f\u4e0a\u624b\u573a\u666f',
+        'scenario.desc': '\u4e09\u79cd\u5e38\u89c1\u7684\u5de5\u4f5c\u6d41\uff0c\u5e2e\u52a9\u4f60\u4f7f\u7528 Claude Code \u642d\u5efa\u9879\u76ee\u5e76\u751f\u6210 CLAUDE.md \u6587\u4ef6\u3002\u9009\u62e9\u9002\u5408\u4f60\u7684\u573a\u666f\u3002',
+        'scenario.tab.new': '\u65b0\u5efa\u9879\u76ee',
+        'scenario.tab.existing': '\u73b0\u6709\u4ee3\u7801\u5e93',
+        'scenario.tab.gitlab': '\u4ece GitLab \u514b\u9686',
+        'scenario.new.step1': '\u521b\u5efa\u9879\u76ee\u76ee\u5f55',
+        'scenario.new.step2': '\u521d\u59cb\u5316 git \u4ed3\u5e93',
+        'scenario.new.step3': '\u542f\u52a8 Claude Code',
+        'scenario.new.step4': '\u5c06\u63d0\u793a\u6846\u67b6\u7c98\u8d34\u5230 Claude Code \u4e2d',
+        'scenario.new.step4.desc': '\u590d\u5236\u4e0b\u65b9\u7684\u7ed3\u6784\u5316\u7b80\u62a5\uff0c\u586b\u5199\u4f60\u7684\u4fe1\u606f\uff0c\u7136\u540e\u4f5c\u4e3a\u7b2c\u4e00\u6761\u6d88\u606f\u7c98\u8d34\u7ed9 Claude\u3002',
+        'scenario.new.step5': '\u8ba9 Claude \u751f\u6210 CLAUDE.md \u6587\u4ef6',
+        'scenario.new.step5.desc': 'Claude \u5c06\u6839\u636e\u4f60\u7684\u9879\u76ee\u4e0a\u4e0b\u6587\u521b\u5efa CLAUDE.md\u3002',
+        'scenario.new.step6': '\u68c0\u67e5\u5e76\u5b8c\u5584 CLAUDE.md',
+        'scenario.new.step6.desc': '\u68c0\u67e5\u751f\u6210\u7684\u6587\u4ef6\uff0c\u7136\u540e\u8ba9 Claude \u8c03\u6574\u4efb\u4f55\u7f3a\u5931\u6216\u4e0d\u6b63\u786e\u7684\u5185\u5bb9\u3002',
+        'scenario.new.step7': '\u521b\u5efa GitLab \u4ed3\u5e93\u5e76\u63a8\u9001',
+        'scenario.new.step7.desc': '\u5c06 gitlab.company.com \u66ff\u6362\u4e3a\u4f60\u5b9e\u9645\u7684\u81ea\u6258\u7ba1 GitLab \u4e3b\u673a\u540d\u3002',
+        'scenario.existing.step1': '\u8fdb\u5165\u4f60\u7684\u9879\u76ee\u6587\u4ef6\u5939',
+        'scenario.existing.step2': '\u5982\u679c\u4e0d\u662f git \u4ed3\u5e93\u5219\u521d\u59cb\u5316',
+        'scenario.existing.step2.desc': '\u5982\u679c\u9879\u76ee\u5df2\u6709 .git \u76ee\u5f55\uff0c\u8df3\u8fc7\u6b64\u6b65\u9aa4\u3002',
+        'scenario.existing.step3': '\u542f\u52a8 Claude Code',
+        'scenario.existing.step4': '\u8ba9 Claude \u5206\u6790\u9879\u76ee\u5e76\u751f\u6210 CLAUDE.md',
+        'scenario.existing.step5': '\u68c0\u67e5\u5e76\u5b8c\u5584 CLAUDE.md',
+        'scenario.existing.step5.desc': '\u68c0\u67e5\u751f\u6210\u7684\u6587\u4ef6\uff0c\u7136\u540e\u8ba9 Claude \u8c03\u6574\u4efb\u4f55\u7f3a\u5931\u6216\u4e0d\u6b63\u786e\u7684\u5185\u5bb9\u3002',
+        'scenario.existing.step6': '\u521b\u5efa GitLab \u4ed3\u5e93\u5e76\u63a8\u9001',
+        'scenario.existing.step6.desc': '\u5c06 gitlab.company.com \u66ff\u6362\u4e3a\u4f60\u5b9e\u9645\u7684\u81ea\u6258\u7ba1 GitLab \u4e3b\u673a\u540d\u3002',
+        'scenario.gitlab.step1': '\u4ece GitLab \u514b\u9686\u4ed3\u5e93',
+        'scenario.gitlab.step1.desc': '\u5c06 gitlab.company.com \u66ff\u6362\u4e3a\u4f60\u5b9e\u9645\u7684\u81ea\u6258\u7ba1 GitLab \u4e3b\u673a\u540d\u3002',
+        'scenario.gitlab.step2': '\u8fdb\u5165\u9879\u76ee\u76ee\u5f55',
+        'scenario.gitlab.step3': '\u542f\u52a8 Claude Code',
+        'scenario.gitlab.step4': '\u8ba9 Claude \u5206\u6790\u9879\u76ee\u5e76\u521b\u5efa CLAUDE.md',
+        'scenario.gitlab.step5': '\u63d0\u4ea4\u5e76\u63a8\u9001 CLAUDE.md',
+        'scenario.framework.title': '\u65b0\u9879\u76ee\u63d0\u793a\u6846\u67b6',
+        'scenario.framework.desc': '\u590d\u5236\u6b64\u6a21\u677f\uff0c\u586b\u5199\u62ec\u53f7\u5185\u7684\u5b57\u6bb5\uff0c\u7136\u540e\u4f5c\u4e3a\u7b2c\u4e00\u6761\u6d88\u606f\u7c98\u8d34\u5230 Claude Code \u4e2d\uff1a',
+        'scenario.template.title': 'SEI CLAUDE.md \u6a21\u677f',
+        'scenario.template.desc': '\u521b\u5efa CLAUDE.md \u6587\u4ef6\u65f6\uff0c\u4ee5\u6b64\u4e3a\u8d77\u70b9\uff1a',
       }
     };
 
@@ -1266,6 +1671,24 @@ claude</code></pre>
         btn.classList.add('border-surface-200');
       }
       renderDeptTools();
+    }
+
+    // ===================== Scenario Tab Switching =====================
+    function switchScenarioTab(tab) {
+      document.querySelectorAll('.scenario-tab-btn').forEach(el => {
+        el.classList.remove('active');
+        el.classList.add('border-transparent', 'text-surface-500');
+        el.classList.remove('border-surface-200');
+      });
+      const btn = document.querySelector('.scenario-tab-btn[data-scenario-tab="' + tab + '"]');
+      if (btn) {
+        btn.classList.add('active');
+        btn.classList.remove('border-transparent', 'text-surface-500');
+        btn.classList.add('border-surface-200');
+      }
+      document.querySelectorAll('.scenario-tab-content').forEach(el => el.classList.remove('active'));
+      const content = document.getElementById('scenario-' + tab);
+      if (content) content.classList.add('active');
     }
 
     function escapeHtml(str) {
