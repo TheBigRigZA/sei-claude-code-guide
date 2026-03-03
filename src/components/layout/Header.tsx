@@ -23,9 +23,9 @@ export default function Header({ locale }: HeaderProps) {
           <Image
             src="https://ueeshop.ly200-cdn.com/u_file/UPAO/UPAO310/2010/photo/0d6812b65e.png"
             alt="SEI Robotics"
-            width={140}
-            height={40}
-            className="h-10 w-auto brightness-0 invert"
+            width={560}
+            height={160}
+            className="h-40 w-auto brightness-0 invert"
             unoptimized
           />
           <LanguageToggle />
