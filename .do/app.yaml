@@ -1,14 +1,25 @@
 name: sei-claude-code-guide
 region: sgp
-static_sites:
+services:
   - name: sei-claude-code-guide
     github:
       repo: TheBigRigZA/sei-claude-code-guide
       branch: main
       deploy_on_push: true
     source_dir: /
-    index_document: index.html
-    output_dir: /
+    build_command: npm run build
+    run_command: npm start
+    environment_slug: node-js
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    http_port: 3000
+    envs:
+      - key: OPENROUTER_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: NODE_ENV
+        scope: RUN_AND_BUILD_TIME
+        value: production
 domains:
   - domain: sei.mediabox.co
     type: PRIMARY

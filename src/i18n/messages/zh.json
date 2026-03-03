@@ -1,0 +1,385 @@
+{
+  "meta": {
+    "title": "Claude Code 设置指南 — OpenRouter",
+    "description": "安装 Claude Code 并通过 OpenRouter 连接，获取 AI 编码助手。"
+  },
+  "hero": {
+    "badge": "内部员工指南",
+    "subtitle": "设置指南",
+    "desc": "安装 Claude Code 并通过 <strong>OpenRouter</strong> 连接，获取 AI 编码助手。请按照以下步骤操作。",
+    "cta1": "开始使用",
+    "cta2": "快速参考",
+    "cta3": "快速上手场景",
+    "cta4": "亿赛通指南"
+  },
+  "toc": {
+    "title": "目录",
+    "1": "前置条件",
+    "2": "创建 OpenRouter API 密钥",
+    "3": "安装 Claude Code",
+    "4": "配置环境变量",
+    "5": "启动和验证",
+    "6": "故障排除",
+    "7": "部门 CLI 工具",
+    "8": "AI 工具推荐",
+    "9": "快速上手场景"
+  },
+  "prereq": {
+    "title": "前置条件",
+    "internet": "网络",
+    "internetDesc": "安装和 API 调用需要网络连接。",
+    "terminal": "终端",
+    "terminalDesc": "macOS 终端、Linux shell 或 Windows PowerShell / CMD。",
+    "account": "OpenRouter 账户",
+    "accountDesc": "在 openrouter.ai 免费注册。",
+    "git": "Git（仅 Windows）",
+    "gitDesc": "请先安装 Git for Windows。"
+  },
+  "key": {
+    "title": "创建 OpenRouter API 密钥",
+    "step1": "访问 openrouter.ai 并点击注册。",
+    "step1Note": "可以使用 Google、GitHub 或电子邮件注册。",
+    "step2": "导航到设置 → 密钥。",
+    "step3": "点击「创建密钥」。",
+    "step3Note": "给它一个描述性名称，例如 claude-code-work。",
+    "step4": "立即复制您的 API 密钥。",
+    "step4Note": "它以 sk-or-v1- 开头，只显示一次。请保存到密码管理器中。",
+    "step5": "（可选）在 openrouter.ai/credits 充值。",
+    "step5Note": "使用 API 需要充值。按用量付费。",
+    "security": "安全提醒：请像对待密码一样对待 API 密钥。切勿分享、提交到 git 或粘贴到 Slack/Teams/邮件中。"
+  },
+  "install": {
+    "title": "安装 Claude Code",
+    "macNativeTitle": "选项 A — 原生安装",
+    "macNativeRecommended": "推荐",
+    "macNativeDesc": "后台自动更新。打开终端并运行：",
+    "macNativeCmd": "curl -fsSL https://claude.ai/install.sh | bash",
+    "macBrewTitle": "选项 B — Homebrew",
+    "macBrewDesc": "不会自动更新 — 请定期运行 brew upgrade claude-code。",
+    "macBrewCmd": "brew install --cask claude-code",
+    "linuxTitle": "原生安装",
+    "linuxRecommended": "推荐",
+    "linuxDesc": "适用于大多数 Linux 发行版和 WSL。打开终端并运行：",
+    "linuxCmd": "curl -fsSL https://claude.ai/install.sh | bash",
+    "winPrereq": "前提条件：请先安装 Git for Windows。安装时接受所有默认设置。",
+    "winPsTitle": "选项 A — PowerShell",
+    "winPsRecommended": "推荐",
+    "winPsDesc": "打开 PowerShell 并运行：",
+    "winPsCmd": "irm https://claude.ai/install.ps1 | iex",
+    "winCmdTitle": "选项 B — 命令提示符 (CMD)",
+    "winCmdCmd": "curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd",
+    "winGetTitle": "选项 C — WinGet",
+    "winGetDesc": "不会自动更新 — 请定期运行 winget upgrade Anthropic.ClaudeCode。",
+    "winGetCmd": "winget install Anthropic.ClaudeCode",
+    "winWslTitle": "选项 D — WSL",
+    "winWslDesc": "如果您已设置 WSL，请打开 WSL 终端并使用上方的 Linux 安装命令。"
+  },
+  "config": {
+    "title": "配置环境变量",
+    "desc": "通过设置这些环境变量，让 Claude Code 通过 OpenRouter 路由请求。",
+    "unixStep1": "步骤 1：用文本编辑器打开您的 shell 配置文件。",
+    "zshLabel": "Zsh（macOS 默认）",
+    "bashLabel": "Bash（大多数 Linux 默认）",
+    "unixStep2": "步骤 2：在文件底部添加这些行。将占位符替换为您的实际密钥。",
+    "unixStep3": "步骤 3：保存文件（在 nano 中：Ctrl+O → Enter → Ctrl+X）。",
+    "unixStep4": "步骤 4：重新加载配置文件：",
+    "winPsTitle": "选项 A — PowerShell 命令",
+    "winPsRecommended": "推荐",
+    "winPsDesc": "在 PowerShell 中运行这些命令。将占位符替换为您的实际密钥。",
+    "winPsAfter": "运行后，关闭并重新打开 PowerShell。",
+    "winGuiTitle": "选项 B — 系统环境变量（图形界面）",
+    "winGuiStep1": "按 Win+R，输入 sysdm.cpl，按回车。",
+    "winGuiStep2": "转到高级选项卡 → 环境变量。",
+    "winGuiStep3": "在用户变量下，点击新建并添加每个：",
+    "winGuiAfter": "点击确定保存，然后关闭并重新打开终端。",
+    "warning": "重要提示：不要将这些变量放在项目中的 .env 文件中。原生 Claude Code 安装程序不会读取 .env 文件。它们必须在您的 shell 配置文件中或设置为系统级环境变量。"
+  },
+  "verify": {
+    "title": "启动和验证",
+    "step1": "打开一个新的终端窗口",
+    "step1Note": "旧窗口不会有新的环境变量。",
+    "step2": "导航到任何项目文件夹并启动 Claude Code：",
+    "step3": "如果您之前登录了 Anthropic，请先注销：",
+    "step3Note": "这会清除缓存的 Anthropic 凭据，让 OpenRouter 接管。",
+    "step4": "验证连接：",
+    "step4Note": "您应该看到确认连接已激活并通过 OpenRouter 路由。",
+    "step5": "尝试一个测试提示：",
+    "step5Note": "如果 Claude 回复了文件列表 — 您就设置好了！",
+    "success": "成功！Claude Code 现在通过 OpenRouter 连接。您可以开始使用它进行编码任务。"
+  },
+  "trouble": {
+    "title": "故障排除",
+    "auth": "「身份验证失败」或「无效的 API 密钥」",
+    "authItems": [
+      "仔细检查您的 OPENROUTER_API_KEY 是否以 sk-or-v1- 开头。",
+      "确保在设置变量后打开了新的终端窗口。",
+      "在 Claude Code 中运行 /logout 以清除旧的 Anthropic 凭据。",
+      "确保 ANTHROPIC_API_KEY 设置为空字符串（\"\"），而不是未设置。"
+    ],
+    "credits": "「余额不足」或速率限制错误",
+    "creditsItems": [
+      "在 openrouter.ai/credits 充值。",
+      "在 openrouter.ai/activity 查看使用情况。"
+    ],
+    "notfound": "找不到 \"claude\" 命令",
+    "notfoundItems": [
+      "安装后关闭并重新打开终端。",
+      "检查 ~/.claude/local/bin 是否在您的 PATH 中。",
+      "尝试再次运行安装命令。"
+    ],
+    "env": "环境变量未生效",
+    "envItems": [
+      "使用以下命令验证：echo $OPENROUTER_API_KEY（Unix）或 echo %OPENROUTER_API_KEY%（Windows）。",
+      "确保您编辑了正确的 shell 配置文件（.zshrc 与 .bashrc）。",
+      "在 Windows 上，确保在设置变量后重新打开了终端。"
+    ],
+    "proxy": "位于企业代理之后",
+    "proxyItems": [
+      "设置 HTTPS_PROXY 和 HTTP_PROXY 环境变量。",
+      "向 IT 询问代理地址和端口。",
+      "某些代理可能需要为 openrouter.ai 设置 NO_PROXY 例外。"
+    ],
+    "esafenet": "亿赛通 (ESAFENET) 加密阻止 Claude Code",
+    "esafenetDesc": "亿赛通 CDG 使用内核级透明加密，会阻止 node.exe 和 git.exe 读取加密的源文件。IT 管理员需要将 Claude Code 进程加入白名单。",
+    "esafenetLink": "查看完整的亿赛通兼容性指南"
+  },
+  "dept": {
+    "title": "部门 CLI 工具",
+    "desc": "为 SEI Robotics 各部门精选的命令行工具。点击任何命令即可复制。",
+    "tabAndroid": "Android 源码",
+    "tabApk": "APK 工具",
+    "tabEmbedded": "嵌入式 Linux",
+    "tabSmart": "智能设备",
+    "tabCloud": "云工程"
+  },
+  "ai": {
+    "title": "AI 工具推荐",
+    "desc": "向 AI 助手咨询针对您角色和工作流的个性化 CLI 工具推荐。",
+    "placeholder": "例如：我负责 Android TV 固件开发...",
+    "send": "发送",
+    "welcome": "您好！我是 SEI Robotics AI 助手。请告诉我您的部门和正在做的工作，我会推荐最适合您工作流的 CLI 工具。",
+    "errorEmpty": "请输入消息。",
+    "errorNetwork": "网络错误。请检查连接并重试。",
+    "errorRate": "请求被限流。请稍等片刻后重试。"
+  },
+  "scenario": {
+    "title": "快速上手场景",
+    "desc": "三种常见的工作流，帮助你使用 Claude Code 搭建项目并生成 CLAUDE.md 文件。选择适合你的场景。",
+    "tabNew": "新建项目",
+    "tabExisting": "现有代码库",
+    "tabGitlab": "从 GitLab 克隆",
+    "newStep1": "创建项目目录",
+    "newStep2": "初始化 git 仓库",
+    "newStep3": "启动 Claude Code",
+    "newStep4": "将提示框架粘贴到 Claude Code 中",
+    "newStep4Desc": "复制下方的结构化简报，填写你的信息，然后作为第一条消息粘贴给 Claude。",
+    "newStep5": "让 Claude 生成 CLAUDE.md 文件",
+    "newStep5Desc": "Claude 将根据你的项目上下文创建 CLAUDE.md。",
+    "newStep6": "检查并完善 CLAUDE.md",
+    "newStep6Desc": "检查生成的文件，然后让 Claude 调整任何缺失或不正确的内容。",
+    "newStep7": "创建 GitLab 仓库并推送",
+    "newStep7Desc": "将 gitlab.company.com 替换为你实际的自托管 GitLab 主机名。",
+    "existingStep1": "进入你的项目文件夹",
+    "existingStep2": "如果不是 git 仓库则初始化",
+    "existingStep2Desc": "如果项目已有 .git 目录，跳过此步骤。",
+    "existingStep3": "启动 Claude Code",
+    "existingStep4": "让 Claude 分析项目并生成 CLAUDE.md",
+    "existingStep5": "检查并完善 CLAUDE.md",
+    "existingStep5Desc": "检查生成的文件，然后让 Claude 调整任何缺失或不正确的内容。",
+    "existingStep6": "创建 GitLab 仓库并推送",
+    "existingStep6Desc": "将 gitlab.company.com 替换为你实际的自托管 GitLab 主机名。",
+    "gitlabStep1": "从 GitLab 克隆仓库",
+    "gitlabStep1Desc": "将 gitlab.company.com 替换为你实际的自托管 GitLab 主机名。",
+    "gitlabStep2": "进入项目目录",
+    "gitlabStep3": "启动 Claude Code",
+    "gitlabStep4": "让 Claude 分析项目并创建 CLAUDE.md",
+    "gitlabStep5": "提交并推送 CLAUDE.md",
+    "frameworkTitle": "新项目提示框架",
+    "frameworkDesc": "复制此模板，填写括号内的字段，然后作为第一条消息粘贴到 Claude Code 中：",
+    "templateTitle": "SEI CLAUDE.md 模板",
+    "templateDesc": "创建 CLAUDE.md 文件时，以此为起点："
+  },
+  "qref": {
+    "title": "快速参考"
+  },
+  "tips": {
+    "title": "提示和最佳实践",
+    "cost": "监控费用",
+    "costDesc": "定期查看 openrouter.ai/activity。在账户设置中设定消费限额。",
+    "update": "保持更新",
+    "updateDesc": "原生安装自动更新。Homebrew/WinGet 用户需手动升级。",
+    "failover": "提供商故障转移",
+    "failoverDesc": "OpenRouter 在多个 Anthropic 提供商之间路由，确保高可用性。",
+    "keys": "切勿提交密钥",
+    "keysDesc": "请勿将 API 密钥放入代码、git 仓库或共享文档中。仅使用环境变量。"
+  },
+  "common": {
+    "copyToast": "已复制到剪贴板",
+    "copy": "复制",
+    "copied": "已复制!",
+    "langLabel": "中文 | EN",
+    "backToTop": "返回顶部"
+  },
+  "footer": {
+    "updated": "最后更新：2026年3月 · 仅供内部使用"
+  },
+  "esafenet": {
+    "meta": {
+      "title": "亿赛通兼容性指南 — Claude Code",
+      "description": "如何配置亿赛通 CDG 透明加密以与 Claude Code 和现代 CLI 开发工具兼容。"
+    },
+    "nav": {
+      "back": "返回设置指南"
+    },
+    "hero": {
+      "badge": "需要 IT 管理员操作",
+      "title1": "亿赛通加密",
+      "title2": "兼容性指南",
+      "desc": "如何配置<strong>亿赛通 (ESAFENET) CDG</strong> 透明加密以与 Claude Code 和现代 CLI 开发工具兼容。"
+    },
+    "s1": {
+      "title": "什么是亿赛通？",
+      "p1": "<strong>亿赛通 (ESAFENET)</strong> CDG 是一套企业级数据防泄漏 (DLP) 系统，使用<strong>透明加密</strong>技术在内核驱动层自动加密文件。广泛用于中国企业保护源代码、设计文档和专有数据。",
+      "card1": {
+        "title": "透明加密",
+        "desc": "文件由内核驱动自动加密/解密。白名单应用中用户看到正常文件。"
+      },
+      "card2": {
+        "title": "进程绑定",
+        "desc": "只有白名单中的可执行文件才能读写加密文件。其他进程看到的是乱码。"
+      },
+      "card3": {
+        "title": "集中管理",
+        "desc": "CDG 服务器控制策略、用户组、文件扩展名和审批流程。"
+      }
+    },
+    "s2": {
+      "title": "工作原理（技术详情）",
+      "intro": "每个终端安装三个组件：",
+      "th1": "组件",
+      "th2": "用途",
+      "r1": "主进程：GUI、加密策略更新、用户认证",
+      "r2": "看门狗：监控并在主进程被终止时自动重启",
+      "r3": "内核驱动：拦截文件 I/O 进行实时加密/解密",
+      "key": "<strong>核心概念：</strong><code>Filelock.sys</code> 内核驱动拦截所有文件读写操作。加密和解密<strong>仅在</strong>同时满足两个条件时触发：(1) 调用进程在白名单中，且 (2) 文件扩展名匹配该进程的批准列表。如果进程不在白名单中，它看到的是原始加密二进制数据。",
+      "enc": {
+        "title": "加密方法",
+        "1": "AES 对称加密用于文件内容（每个文件随机密钥）",
+        "2": "RSA 非对称加密包装 AES 密钥",
+        "3": "加密文件头部特征：62 14 23 65",
+        "4": "所有加密/解密在内核内存中进行 — 磁盘上不会产生明文临时文件"
+      }
+    },
+    "s3": {
+      "title": "Claude Code 的兼容性问题",
+      "intro": "亿赛通是为传统桌面应用（Office、Visual Studio、AutoCAD）设计的。它不原生支持现代 CLI 开发工具。以下是会出现的问题：",
+      "p1": {
+        "title": "Claude Code 无法读取加密文件",
+        "desc": "Claude Code 以 node.exe 运行。如果 node.exe 不在进程白名单中，它接收到的是乱码而不是源代码。"
+      },
+      "p2": {
+        "title": "写入的文件失去加密",
+        "desc": "非白名单进程创建的文件会以未加密明文保存，违反安全策略。"
+      },
+      "p3": {
+        "title": "Git 操作失败",
+        "desc": "git.exe 通常不在白名单中，因此提交、差异对比和合并会在加密文件上产生损坏的结果。"
+      },
+      "p4": {
+        "title": "子进程链中断",
+        "desc": "Claude Code 会启动 git、shell、编译器和检查工具作为子进程。每个都需要加入白名单，否则无法处理加密文件。"
+      }
+    },
+    "s4": {
+      "title": "IT 管理员建议",
+      "a": {
+        "tag": "推荐",
+        "title": "方案 A：将进程添加到白名单",
+        "desc": "登录 CDG 服务器管理控制台，将以下进程添加到透明加密策略的受控进程列表（策略管理 → 透明加密策略 → 受控进程）：",
+        "th1": "进程",
+        "th2": "用途",
+        "th3": "文件扩展名",
+        "node": "Claude Code 运行时、npm、构建工具",
+        "nodeExt": ".js .ts .json .md .html .css .yaml .yml .jsx .tsx .vue .py .java .cpp .h .c",
+        "git": "版本控制（diff、commit、merge）",
+        "bash": "Claude Code 启动的 Shell 操作",
+        "cmd": "Windows 命令提示符",
+        "ps": "PowerShell 脚本",
+        "py": "Python 脚本和工具",
+        "pyExt": ".py .json .yaml .yml .txt .cfg .ini",
+        "sameExt": "（同上）"
+      },
+      "b": {
+        "title": "方案 B：目录排除",
+        "desc": "请求将以下路径完全排除在加密之外（落地加解密策略 → 路径排除）："
+      },
+      "c": {
+        "title": "方案 C：开发者组策略",
+        "desc": "在 CDG 服务器中为开发者工作站创建单独的组织单元，配置定制的加密策略：",
+        "1": "将所有开发可执行文件加入进程白名单",
+        "2": "覆盖所有源代码文件扩展名",
+        "3": "将开发目录排除在强制加密之外",
+        "4": "允许代码的剪贴板操作（取消字符限制）",
+        "note": "这提供了最全面的解决方案，不会削弱非开发部门的安全性。"
+      },
+      "d": {
+        "title": "方案 D：切换到智能加密模式",
+        "desc": "如果可能，将开发者机器从强制透明加密切换到智能加密模式（智能加密）。在此模式下，只有检测到包含敏感内容的文件才会被加密，大多数源代码可自由访问。"
+      }
+    },
+    "s5": {
+      "title": "验证步骤",
+      "intro": "IT 应用策略更改后，开发者应验证：",
+      "v1": {
+        "title": "Claude Code 可以读取项目文件",
+        "desc": "在项目目录中打开 Claude Code，让它总结一个源文件。应该返回可读代码，而不是乱码。"
+      },
+      "v2": {
+        "title": "Claude Code 可以写入文件",
+        "desc": "让 Claude Code 创建或修改文件。验证保存的文件仍可由其他白名单应用打开，并且磁盘上保持加密。"
+      },
+      "v3": {
+        "title": "Git 操作正常工作",
+        "desc": "运行 git diff 和 git log -p — 输出应显示可读的差异，而不是加密二进制。"
+      },
+      "v4": {
+        "title": "加密得到保持",
+        "desc": "用十六进制编辑器检查文件加密状态 — 加密文件以 62 14 23 65 开头。验证文件没有被意外保存为明文。"
+      }
+    },
+    "s6": {
+      "title": "IT 快速参考",
+      "th1": "项目",
+      "th2": "详情",
+      "r1": "CDG 管理路径",
+      "r1v": "/CDGServer3/ → 策略管理",
+      "r2": "进程白名单位置",
+      "r2v": "透明加密 → 受控进程",
+      "r3": "所需进程",
+      "r3v": "node.exe, git.exe, bash.exe, cmd.exe, powershell.exe",
+      "r4": "关键扩展名",
+      "r4v": ".js .ts .json .md .html .css .yaml .py .java .cpp .h .c .vue .jsx .tsx",
+      "r5": "排除目录",
+      "r5v": "node_modules\\, .git\\, .claude\\, %TEMP%\\",
+      "r6": "加密文件特征",
+      "r6v": "62 14 23 65（前4字节）",
+      "r7": "所需管理员角色",
+      "r7v": "系统管理员或安全管理员"
+    },
+    "s7": {
+      "title": "已知问题和限制",
+      "q1": "剪贴板粘贴限制为50个字符以下",
+      "a1": "某些亿赛通配置会限制受控进程的剪贴板操作。请 IT 在 CDG 策略设置中增加或取消开发工具的剪贴板字符限制。",
+      "q2": "大型项目性能下降",
+      "a2": "内核级 I/O 拦截会增加每次文件读写的开销。对于大型项目，请求将 node_modules/ 和 .git/ 目录排除在加密之外，以显著减少开销。",
+      "q3": "WSL（Windows Linux 子系统）兼容性",
+      "a3": "亿赛通的 Windows 内核驱动不会拦截 WSL Linux 进程的 I/O。通过 WSL 访问的文件可能完全绕过加密。使用 WSL 处理加密项目前请咨询 IT 安全部门。",
+      "q4": "未覆盖的新文件扩展名",
+      "a4": "如果您使用不常见的文件类型（.svelte、.astro、.rs、.go 等），请 IT 将其添加到白名单进程的扩展名列表中。"
+    },
+    "footer": {
+      "updated": "最后更新：2026年3月 · 仅供内部使用",
+      "back": "返回设置指南"
+    }
+  }
+}

@@ -1,0 +1,385 @@
+{
+  "meta": {
+    "title": "Claude Code Setup Guide — OpenRouter",
+    "description": "Install Claude Code and connect it to OpenRouter for AI-powered coding assistance."
+  },
+  "hero": {
+    "badge": "Internal Staff Guide",
+    "subtitle": "Setup Guide",
+    "desc": "Install Claude Code and connect it to <strong>OpenRouter</strong> for AI-powered coding assistance. Follow the steps below for your operating system.",
+    "cta1": "Get Started",
+    "cta2": "Quick Reference",
+    "cta3": "Getting Started Scenarios",
+    "cta4": "ESAFENET Guide"
+  },
+  "toc": {
+    "title": "Table of Contents",
+    "1": "Prerequisites",
+    "2": "Create an OpenRouter API Key",
+    "3": "Install Claude Code",
+    "4": "Configure Environment Variables",
+    "5": "Launch & Verify",
+    "6": "Troubleshooting",
+    "7": "Department CLI Tools",
+    "8": "AI Tool Recommendations",
+    "9": "Getting Started Scenarios"
+  },
+  "prereq": {
+    "title": "Prerequisites",
+    "internet": "Internet",
+    "internetDesc": "Required for installation and API calls.",
+    "terminal": "Terminal",
+    "terminalDesc": "macOS Terminal, Linux shell, or Windows PowerShell / CMD.",
+    "account": "OpenRouter Account",
+    "accountDesc": "Free sign-up at openrouter.ai.",
+    "git": "Git (Windows only)",
+    "gitDesc": "Install Git for Windows before proceeding."
+  },
+  "key": {
+    "title": "Create an OpenRouter API Key",
+    "step1": "Go to openrouter.ai and click Sign Up.",
+    "step1Note": "You can sign up with Google, GitHub, or email.",
+    "step2": "Navigate to Settings → Keys.",
+    "step3": "Click \"Create Key\".",
+    "step3Note": "Give it a descriptive name, e.g., claude-code-work.",
+    "step4": "Copy your API key immediately.",
+    "step4Note": "It starts with sk-or-v1- and is only shown once. Store it in a password manager.",
+    "step5": "(Optional) Add credits at openrouter.ai/credits.",
+    "step5Note": "Credits are required to make API calls. Usage is pay-as-you-go.",
+    "security": "Security reminder: Treat your API key like a password. Never share it, commit it to git, or paste it in Slack/Teams/email."
+  },
+  "install": {
+    "title": "Install Claude Code",
+    "macNativeTitle": "Option A — Native Install",
+    "macNativeRecommended": "Recommended",
+    "macNativeDesc": "Auto-updates in the background. Open Terminal and run:",
+    "macNativeCmd": "curl -fsSL https://claude.ai/install.sh | bash",
+    "macBrewTitle": "Option B — Homebrew",
+    "macBrewDesc": "Does not auto-update — run brew upgrade claude-code periodically.",
+    "macBrewCmd": "brew install --cask claude-code",
+    "linuxTitle": "Native Install",
+    "linuxRecommended": "Recommended",
+    "linuxDesc": "Works on most Linux distributions and WSL. Open your terminal and run:",
+    "linuxCmd": "curl -fsSL https://claude.ai/install.sh | bash",
+    "winPrereq": "Prerequisite: Install Git for Windows first. Accept all defaults during installation.",
+    "winPsTitle": "Option A — PowerShell",
+    "winPsRecommended": "Recommended",
+    "winPsDesc": "Open PowerShell and run:",
+    "winPsCmd": "irm https://claude.ai/install.ps1 | iex",
+    "winCmdTitle": "Option B — Command Prompt (CMD)",
+    "winCmdCmd": "curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd",
+    "winGetTitle": "Option C — WinGet",
+    "winGetDesc": "Does not auto-update — run winget upgrade Anthropic.ClaudeCode periodically.",
+    "winGetCmd": "winget install Anthropic.ClaudeCode",
+    "winWslTitle": "Option D — WSL",
+    "winWslDesc": "If you have WSL set up, open your WSL terminal and use the Linux install command above."
+  },
+  "config": {
+    "title": "Configure Environment Variables",
+    "desc": "Tell Claude Code to route requests through OpenRouter by setting these environment variables.",
+    "unixStep1": "Step 1: Open your shell profile in a text editor.",
+    "zshLabel": "Zsh (default on macOS)",
+    "bashLabel": "Bash (default on most Linux)",
+    "unixStep2": "Step 2: Add these lines at the bottom of the file. Replace the placeholder with your actual key.",
+    "unixStep3": "Step 3: Save the file (in nano: Ctrl+O → Enter → Ctrl+X).",
+    "unixStep4": "Step 4: Reload your profile:",
+    "winPsTitle": "Option A — PowerShell Commands",
+    "winPsRecommended": "Recommended",
+    "winPsDesc": "Run these in PowerShell. Replace the placeholder with your actual key.",
+    "winPsAfter": "After running, close and reopen PowerShell.",
+    "winGuiTitle": "Option B — System Environment Variables (GUI)",
+    "winGuiStep1": "Press Win+R, type sysdm.cpl, press Enter.",
+    "winGuiStep2": "Go to Advanced tab → Environment Variables.",
+    "winGuiStep3": "Under User variables, click New and add each:",
+    "winGuiAfter": "Click OK to save, then close and reopen your terminal.",
+    "warning": "Important: Do not put these variables in a .env file in your project. The native Claude Code installer does not read .env files. They must be in your shell profile or set as system-level environment variables."
+  },
+  "verify": {
+    "title": "Launch & Verify",
+    "step1": "Open a new terminal window",
+    "step1Note": "Old windows won't have the new environment variables.",
+    "step2": "Navigate to any project folder and launch Claude Code:",
+    "step3": "If you were previously logged in to Anthropic, log out first:",
+    "step3Note": "This clears cached Anthropic credentials so OpenRouter takes over.",
+    "step4": "Verify the connection:",
+    "step4Note": "You should see confirmation that your connection is active and routed through OpenRouter.",
+    "step5": "Try a test prompt:",
+    "step5Note": "If Claude responds with a file listing — you're all set!",
+    "success": "Success! Claude Code is now connected through OpenRouter. You can start using it for coding tasks."
+  },
+  "trouble": {
+    "title": "Troubleshooting",
+    "auth": "\"Authentication failed\" or \"Invalid API key\"",
+    "authItems": [
+      "Double-check your OPENROUTER_API_KEY starts with sk-or-v1-.",
+      "Make sure you opened a new terminal window after setting variables.",
+      "Run /logout inside Claude Code to clear old Anthropic credentials.",
+      "Ensure ANTHROPIC_API_KEY is set to an empty string (\"\"), not left unset."
+    ],
+    "credits": "\"Insufficient credits\" or rate limit errors",
+    "creditsItems": [
+      "Add credits at openrouter.ai/credits.",
+      "Check your usage at openrouter.ai/activity."
+    ],
+    "notfound": "\"claude\" command not found",
+    "notfoundItems": [
+      "Close and reopen your terminal after installation.",
+      "Check that ~/.claude/local/bin is in your PATH.",
+      "Try running the install command again."
+    ],
+    "env": "Environment variables not being picked up",
+    "envItems": [
+      "Verify with: echo $OPENROUTER_API_KEY (Unix) or echo %OPENROUTER_API_KEY% (Windows).",
+      "Make sure you edited the correct shell profile (.zshrc vs .bashrc).",
+      "On Windows, ensure you reopened your terminal after setting variables."
+    ],
+    "proxy": "Behind a corporate proxy",
+    "proxyItems": [
+      "Set HTTPS_PROXY and HTTP_PROXY environment variables.",
+      "Ask IT for the proxy address and port.",
+      "Some proxies may require NO_PROXY exceptions for openrouter.ai."
+    ],
+    "esafenet": "ESAFENET (亿赛通) encryption blocking Claude Code",
+    "esafenetDesc": "ESAFENET CDG uses kernel-level transparent encryption that blocks node.exe and git.exe from reading encrypted source files. IT admins need to whitelist Claude Code processes.",
+    "esafenetLink": "View full ESAFENET Compatibility Guide"
+  },
+  "dept": {
+    "title": "Department CLI Tools",
+    "desc": "Curated command-line tools for each SEI Robotics department. Click any command to copy it.",
+    "tabAndroid": "Android Source",
+    "tabApk": "APK Tools",
+    "tabEmbedded": "Embedded Linux",
+    "tabSmart": "Smart Devices",
+    "tabCloud": "Cloud Engineering"
+  },
+  "ai": {
+    "title": "AI Tool Recommendations",
+    "desc": "Ask our AI assistant for personalized CLI tool recommendations based on your role and workflow.",
+    "placeholder": "e.g., I work on Android TV firmware...",
+    "send": "Send",
+    "welcome": "Hello! I'm your SEI Robotics AI assistant. Tell me your department and what you're working on, and I'll recommend the best CLI tools for your workflow.",
+    "errorEmpty": "Please type a message.",
+    "errorNetwork": "Network error. Please check your connection and try again.",
+    "errorRate": "Rate limited. Please wait a moment and try again."
+  },
+  "scenario": {
+    "title": "Getting Started Scenarios",
+    "desc": "Three common workflows for setting up a project with Claude Code and a CLAUDE.md file. Pick the scenario that matches your situation.",
+    "tabNew": "New Project",
+    "tabExisting": "Existing Codebase",
+    "tabGitlab": "Clone from GitLab",
+    "newStep1": "Create your project directory",
+    "newStep2": "Initialize a git repository",
+    "newStep3": "Launch Claude Code",
+    "newStep4": "Paste the prompting framework into Claude Code",
+    "newStep4Desc": "Copy the structured brief below, fill in your details, and paste it as your first message to Claude.",
+    "newStep5": "Ask Claude to generate a CLAUDE.md file",
+    "newStep5Desc": "Claude will create a CLAUDE.md based on your project context.",
+    "newStep6": "Review and refine CLAUDE.md",
+    "newStep6Desc": "Check the generated file, then ask Claude to adjust anything that's missing or incorrect.",
+    "newStep7": "Create a GitLab repo and push",
+    "newStep7Desc": "Replace gitlab.company.com with your actual self-hosted GitLab hostname.",
+    "existingStep1": "Navigate to your project folder",
+    "existingStep2": "Initialize git if not already a repo",
+    "existingStep2Desc": "Skip this if your project already has a .git directory.",
+    "existingStep3": "Launch Claude Code",
+    "existingStep4": "Ask Claude to analyze and generate CLAUDE.md",
+    "existingStep5": "Review and refine CLAUDE.md",
+    "existingStep5Desc": "Check the generated file and ask Claude to adjust anything that's missing or incorrect.",
+    "existingStep6": "Create a GitLab repo and push",
+    "existingStep6Desc": "Replace gitlab.company.com with your actual self-hosted GitLab hostname.",
+    "gitlabStep1": "Clone the repository from GitLab",
+    "gitlabStep1Desc": "Replace gitlab.company.com with your actual self-hosted GitLab hostname.",
+    "gitlabStep2": "Enter the project directory",
+    "gitlabStep3": "Launch Claude Code",
+    "gitlabStep4": "Ask Claude to analyze and create CLAUDE.md",
+    "gitlabStep5": "Commit and push CLAUDE.md",
+    "frameworkTitle": "Prompting Framework for New Projects",
+    "frameworkDesc": "Copy this template, fill in the bracketed fields, and paste it as your first message to Claude Code:",
+    "templateTitle": "SEI CLAUDE.md Template",
+    "templateDesc": "Use this as a starting point when creating your CLAUDE.md file:"
+  },
+  "qref": {
+    "title": "Quick Reference"
+  },
+  "tips": {
+    "title": "Tips & Best Practices",
+    "cost": "Monitor Costs",
+    "costDesc": "Check openrouter.ai/activity regularly. Set spending limits in your account settings.",
+    "update": "Stay Updated",
+    "updateDesc": "Native installs auto-update. Homebrew/WinGet users: upgrade manually.",
+    "failover": "Provider Failover",
+    "failoverDesc": "OpenRouter routes between multiple Anthropic providers for high availability.",
+    "keys": "Never Commit Keys",
+    "keysDesc": "Keep your API key out of code, git repos, and shared documents. Use env vars only."
+  },
+  "common": {
+    "copyToast": "Copied to clipboard",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "langLabel": "EN | 中文",
+    "backToTop": "Back to top"
+  },
+  "footer": {
+    "updated": "Last updated: March 2026 · Internal use only"
+  },
+  "esafenet": {
+    "meta": {
+      "title": "ESAFENET Compatibility Guide — Claude Code",
+      "description": "How to configure ESAFENET CDG transparent encryption to work with Claude Code and modern CLI development tools."
+    },
+    "nav": {
+      "back": "Back to Setup Guide"
+    },
+    "hero": {
+      "badge": "IT Admin Action Required",
+      "title1": "ESAFENET Encryption",
+      "title2": "Compatibility Guide",
+      "desc": "How to configure <strong>ESAFENET CDG</strong> transparent encryption to work with Claude Code and modern CLI development tools."
+    },
+    "s1": {
+      "title": "What Is ESAFENET?",
+      "p1": "<strong>ESAFENET</strong> CDG is an enterprise Data Loss Prevention (DLP) system that uses <strong>transparent encryption</strong> to automatically encrypt files at the kernel driver level. It is widely used in Chinese enterprises to protect source code, design documents, and proprietary data.",
+      "card1": {
+        "title": "Transparent Encryption",
+        "desc": "Files are encrypted/decrypted automatically by a kernel driver. Users see normal files in whitelisted apps."
+      },
+      "card2": {
+        "title": "Process Binding",
+        "desc": "Only whitelisted executables can read/write encrypted files. Other processes see garbled data."
+      },
+      "card3": {
+        "title": "Central Management",
+        "desc": "CDG Server controls policies, user groups, file extensions, and approval workflows."
+      }
+    },
+    "s2": {
+      "title": "How It Works (Technical)",
+      "intro": "Three components are installed on each endpoint:",
+      "th1": "Component",
+      "th2": "Purpose",
+      "r1": "Main process: GUI, encryption policy updates, user auth",
+      "r2": "Watchdog: monitors and restarts main process if killed",
+      "r3": "Kernel driver: intercepts file I/O for real-time encrypt/decrypt",
+      "key": "<strong>Key concept:</strong> The <code>Filelock.sys</code> kernel driver intercepts all file read/write operations. Encryption and decryption happen <strong>only</strong> when both conditions are met: (1) the calling process is in the whitelist, AND (2) the file extension matches that process's approved list. If a process is NOT whitelisted, it sees raw encrypted binary data.",
+      "enc": {
+        "title": "Encryption Method",
+        "1": "AES symmetric encryption for file content (random per-file key)",
+        "2": "RSA asymmetric encryption wraps the AES key",
+        "3": "Encrypted files have header signature: 62 14 23 65",
+        "4": "All encryption/decryption occurs in kernel memory — no plaintext temp files on disk"
+      }
+    },
+    "s3": {
+      "title": "The Problem with Claude Code",
+      "intro": "ESAFENET was designed for traditional desktop applications (Office, Visual Studio, AutoCAD). It does NOT natively support modern CLI development tools. Here's what breaks:",
+      "p1": {
+        "title": "Claude Code Can't Read Encrypted Files",
+        "desc": "Claude Code runs as node.exe. If node.exe is not in the process whitelist, it receives garbled binary data instead of source code."
+      },
+      "p2": {
+        "title": "Files Written Lose Encryption",
+        "desc": "Files created by a non-whitelisted process are saved as unencrypted plaintext, violating security policy."
+      },
+      "p3": {
+        "title": "Git Operations Fail",
+        "desc": "git.exe is typically not whitelisted, so commits, diffs, and merges produce corrupted results on encrypted files."
+      },
+      "p4": {
+        "title": "Sub-Process Chain Breaks",
+        "desc": "Claude Code spawns git, shell, compilers, and linters as sub-processes. Each one needs whitelisting or it fails on encrypted files."
+      }
+    },
+    "s4": {
+      "title": "Recommendations for IT Admins",
+      "a": {
+        "tag": "Recommended",
+        "title": "Option A: Add Processes to Whitelist",
+        "desc": "Log into the CDG Server management console and add the following processes to the transparent encryption policy's controlled process list:",
+        "th1": "Process",
+        "th2": "Why Needed",
+        "th3": "File Extensions",
+        "node": "Claude Code runtime, npm, build tools",
+        "nodeExt": ".js .ts .json .md .html .css .yaml .yml .jsx .tsx .vue .py .java .cpp .h .c",
+        "git": "Version control (diff, commit, merge)",
+        "bash": "Shell operations spawned by Claude Code",
+        "cmd": "Windows command prompt",
+        "ps": "PowerShell scripting",
+        "py": "Python scripts and tooling",
+        "pyExt": ".py .json .yaml .yml .txt .cfg .ini",
+        "sameExt": "(same as above)"
+      },
+      "b": {
+        "title": "Option B: Directory Exclusions",
+        "desc": "Request that the following paths are excluded from encryption entirely:"
+      },
+      "c": {
+        "title": "Option C: Developer Group Policy",
+        "desc": "Create a separate organizational unit in CDG Server for developer workstations with a tailored encryption policy that:",
+        "1": "Includes all development executables in the process whitelist",
+        "2": "Covers all source code file extensions",
+        "3": "Excludes development directories from forced encryption",
+        "4": "Allows clipboard operations for code (removes character limits)",
+        "note": "This provides the most comprehensive solution without weakening security for non-developer departments."
+      },
+      "d": {
+        "title": "Option D: Switch to Intelligent Encryption Mode",
+        "desc": "If possible, switch developer machines from forced transparent encryption to intelligent encryption mode. In this mode, only files detected as containing sensitive content are encrypted, leaving most source code freely accessible to all tools."
+      }
+    },
+    "s5": {
+      "title": "Verification Steps",
+      "intro": "After IT applies the policy changes, developers should verify:",
+      "v1": {
+        "title": "Claude Code can read project files",
+        "desc": "Open Claude Code in a project directory and ask it to summarize a source file. It should return readable code, not garbled binary."
+      },
+      "v2": {
+        "title": "Claude Code can write files",
+        "desc": "Ask Claude Code to create or modify a file. Verify the saved file can still be opened by other whitelisted applications and remains encrypted on disk."
+      },
+      "v3": {
+        "title": "Git operations work correctly",
+        "desc": "Run git diff and git log -p — output should show readable diffs, not encrypted binary."
+      },
+      "v4": {
+        "title": "Encryption is maintained",
+        "desc": "Check a file's encryption status with a hex editor — encrypted files start with 62 14 23 65. Verify files aren't accidentally saved as plaintext."
+      }
+    },
+    "s6": {
+      "title": "Quick Reference for IT",
+      "th1": "Item",
+      "th2": "Details",
+      "r1": "CDG Admin Path",
+      "r1v": "/CDGServer3/ → Strategy Management",
+      "r2": "Process Whitelist Location",
+      "r2v": "Transparent Encryption → Controlled Processes",
+      "r3": "Required Processes",
+      "r3v": "node.exe, git.exe, bash.exe, cmd.exe, powershell.exe",
+      "r4": "Key Extensions",
+      "r4v": ".js .ts .json .md .html .css .yaml .py .java .cpp .h .c .vue .jsx .tsx",
+      "r5": "Exclude Dirs",
+      "r5v": "node_modules\\, .git\\, .claude\\, %TEMP%\\",
+      "r6": "Encrypted File Signature",
+      "r6v": "62 14 23 65 (first 4 bytes)",
+      "r7": "Admin Roles Required",
+      "r7v": "System Administrator or Security Administrator"
+    },
+    "s7": {
+      "title": "Known Issues & Limitations",
+      "q1": "Clipboard paste limited to <50 characters",
+      "a1": "Some ESAFENET configurations restrict clipboard operations for controlled processes. Ask IT to increase or remove the clipboard character limit for developer tools in the CDG policy settings.",
+      "q2": "Performance degradation on large projects",
+      "a2": "The kernel-level I/O interception adds overhead to every file read/write. For large projects, request that node_modules/ and .git/ directories are excluded from encryption to significantly reduce overhead.",
+      "q3": "WSL (Windows Subsystem for Linux) compatibility",
+      "a3": "ESAFENET's Windows kernel driver does not intercept I/O from WSL Linux processes. Files accessed via WSL may bypass encryption entirely. Check with IT security before using WSL with encrypted projects.",
+      "q4": "New file extensions not covered",
+      "a4": "If you work with uncommon file types (.svelte, .astro, .rs, .go, etc.), request IT to add them to the extension list for your whitelisted processes."
+    },
+    "footer": {
+      "updated": "Last updated: March 2026 · Internal use only",
+      "back": "Back to Setup Guide"
+    }
+  }
+}
