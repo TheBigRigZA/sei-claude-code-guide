@@ -19,7 +19,7 @@ export default function Tabs({ tabs, defaultTab, children }: TabsProps) {
   return (
     <div>
       {/* Tab buttons */}
-      <div className="flex border-b border-surface-200 mb-0 gap-1" role="tablist">
+      <div className="flex border-b border-white/[0.06] mb-0 gap-1" role="tablist">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -30,8 +30,8 @@ export default function Tabs({ tabs, defaultTab, children }: TabsProps) {
               aria-selected={isActive}
               className={`rounded-t-lg border border-b-0 px-5 py-2.5 text-sm font-semibold transition ${
                 isActive
-                  ? 'border-surface-200 bg-brand-50 text-brand-500'
-                  : 'border-transparent text-surface-500 hover:text-surface-700'
+                  ? 'border-white/[0.08] bg-accent-500/10 text-accent-300'
+                  : 'border-transparent text-surface-500 hover:text-surface-300'
               }`}
             >
               {tab.label}
@@ -41,7 +41,7 @@ export default function Tabs({ tabs, defaultTab, children }: TabsProps) {
       </div>
 
       {/* Tab content */}
-      <div className="rounded-b-2xl rounded-tr-2xl border border-surface-200 bg-white shadow-sm p-6 sm:p-8">
+      <div className="rounded-b-2xl rounded-tr-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8">
         {children(activeTab)}
       </div>
     </div>

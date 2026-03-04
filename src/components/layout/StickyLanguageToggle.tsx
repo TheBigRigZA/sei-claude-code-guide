@@ -13,8 +13,6 @@ export default function StickyLanguageToggle() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Show the sticky toggle once the user scrolls past the hero section
-      // The hero is roughly the height of the viewport
       const heroHeight = window.innerHeight * 0.6;
       setIsVisible(window.scrollY > heroHeight);
     };
@@ -34,7 +32,7 @@ export default function StickyLanguageToggle() {
     <button
       onClick={toggleLocale}
       disabled={isPending}
-      className={`fixed top-4 right-8 z-50 inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-full shadow-lg transition-all duration-300 disabled:opacity-50 cursor-pointer ${
+      className={`fixed top-4 right-8 z-50 inline-flex items-center gap-2 px-4 py-2 glass-strong text-white text-sm font-medium rounded-full transition-all duration-300 hover:bg-white/[0.12] disabled:opacity-50 cursor-pointer ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
       }`}
       aria-label={locale === 'en' ? 'Switch to Chinese' : '切换到英文'}

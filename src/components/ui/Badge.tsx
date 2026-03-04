@@ -8,8 +8,8 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-brand-100 text-brand-700',
-  success: 'bg-green-100 text-green-700',
+  default: 'bg-brand-500/15 text-brand-300',
+  success: 'bg-green-500/15 text-green-400',
 };
 
 export default function Badge({ children, variant = 'default' }: BadgeProps) {

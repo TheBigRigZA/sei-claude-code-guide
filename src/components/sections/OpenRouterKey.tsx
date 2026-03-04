@@ -1,5 +1,6 @@
+'use client';
+
 import { useTranslations } from 'next-intl';
-import SectionHeading from '@/components/layout/SectionHeading';
 import StepCard from '@/components/ui/StepCard';
 import AlertBox from '@/components/ui/AlertBox';
 
@@ -15,26 +16,19 @@ export default function OpenRouterKey() {
   ];
 
   return (
-    <section>
-      <SectionHeading number={2} title={t('title')} id="api-key" />
+    <div className="space-y-4">
+      {steps.map((step) => (
+        <StepCard
+          key={step.number}
+          number={step.number}
+          title={step.title}
+          description={step.description}
+        />
+      ))}
 
-      <div className="rounded-2xl bg-white shadow-sm border border-surface-200 divide-y divide-surface-100">
-        {steps.map((step) => (
-          <div key={step.number} className="p-4 sm:p-6">
-            <StepCard
-              number={step.number}
-              title={step.title}
-              description={step.description}
-            />
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6">
-        <AlertBox variant="warning">
-          {t('security')}
-        </AlertBox>
-      </div>
-    </section>
+      <AlertBox variant="warning">
+        {t('security')}
+      </AlertBox>
+    </div>
   );
 }

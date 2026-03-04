@@ -11,7 +11,6 @@ export default function BackToTop() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Check initial position
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
@@ -24,7 +23,7 @@ export default function BackToTop() {
   return (
     <button
       onClick={scrollToTop}
-      className={`fixed bottom-8 right-8 z-50 bg-white border border-surface-200 shadow-lg hover:shadow-xl text-surface-600 hover:text-brand-600 rounded-full w-11 h-11 flex items-center justify-center transition-all duration-300 ${
+      className={`fixed bottom-8 right-8 z-50 glass-strong text-surface-400 hover:text-accent-400 rounded-full w-11 h-11 flex items-center justify-center transition-all duration-300 ${
         visible
           ? 'opacity-100 translate-y-0 pointer-events-auto'
           : 'opacity-0 translate-y-4 pointer-events-none'

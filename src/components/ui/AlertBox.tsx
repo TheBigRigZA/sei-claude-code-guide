@@ -9,24 +9,24 @@ interface AlertBoxProps {
 
 const variantStyles: Record<AlertVariant, { container: string; icon: string; iconChar: string }> = {
   warning: {
-    container: 'bg-amber-50 border-amber-200',
-    icon: 'text-amber-600',
-    iconChar: '\u26A0', // Warning sign
+    container: 'bg-amber-500/10 border-amber-500/20',
+    icon: 'text-amber-400',
+    iconChar: '\u26A0',
   },
   info: {
-    container: 'bg-blue-50 border-blue-200',
-    icon: 'text-blue-600',
-    iconChar: '\u2139', // Info sign
+    container: 'bg-blue-500/10 border-blue-500/20',
+    icon: 'text-blue-400',
+    iconChar: '\u2139',
   },
   success: {
-    container: 'bg-green-50 border-green-200',
-    icon: 'text-green-600',
-    iconChar: '\u2714', // Check mark
+    container: 'bg-green-500/10 border-green-500/20',
+    icon: 'text-green-400',
+    iconChar: '\u2714',
   },
   error: {
-    container: 'bg-red-50 border-red-200',
-    icon: 'text-red-600',
-    iconChar: '\u2718', // Cross mark
+    container: 'bg-red-500/10 border-red-500/20',
+    icon: 'text-red-400',
+    iconChar: '\u2718',
   },
 };
 
@@ -38,7 +38,7 @@ export default function AlertBox({ variant, children }: AlertBoxProps) {
       <span className={`text-xl shrink-0 ${styles.icon}`} aria-hidden="true">
         {styles.iconChar}
       </span>
-      <div className="text-sm">
+      <div className="text-sm text-surface-300">
         {children}
       </div>
     </div>

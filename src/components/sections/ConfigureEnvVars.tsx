@@ -1,7 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import SectionHeading from '@/components/layout/SectionHeading';
 import Tabs from '@/components/ui/Tabs';
 import StepCard from '@/components/ui/StepCard';
 import CodeBlock from '@/components/ui/CodeBlock';
@@ -35,115 +34,91 @@ export default function ConfigureEnvVars() {
   const t = useTranslations('config');
 
   return (
-    <section>
-      <SectionHeading number={4} title={t('title')} id="configure" />
-
-      <p className="text-surface-600 mb-8">{t('desc')}</p>
+    <div>
+      <p className="text-surface-400 mb-8">{t('desc')}</p>
 
       <Tabs tabs={envTabs} defaultTab="unix">
         {(activeTab) => {
           if (activeTab === 'unix') {
             return (
               <div className="space-y-8">
-                {/* Step 1 */}
-                <div>
-                  <StepCard number={1} title={t('unixStep1')}>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-xs font-medium text-surface-500 mb-2">{t('zshLabel')}</p>
-                        <CodeBlock code="nano ~/.zshrc" language="bash" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-surface-500 mb-2">{t('bashLabel')}</p>
-                        <CodeBlock code="nano ~/.bashrc" language="bash" />
-                      </div>
+                <StepCard number={1} title={t('unixStep1')}>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs font-medium text-surface-500 mb-2">{t('zshLabel')}</p>
+                      <CodeBlock code="nano ~/.zshrc" language="bash" />
                     </div>
-                  </StepCard>
-                </div>
+                    <div>
+                      <p className="text-xs font-medium text-surface-500 mb-2">{t('bashLabel')}</p>
+                      <CodeBlock code="nano ~/.bashrc" language="bash" />
+                    </div>
+                  </div>
+                </StepCard>
 
-                {/* Step 2 */}
-                <div>
-                  <StepCard number={2} title={t('unixStep2')}>
-                    <p className="text-sm text-red-600 font-medium mb-3">
-                      Replace <code className="bg-red-50 px-1.5 py-0.5 rounded text-red-700">sk-or-v1-YOUR_KEY_HERE</code> with your actual API key.
-                    </p>
-                    <CodeBlock code={unixExportLines} language="bash" />
-                  </StepCard>
-                </div>
+                <StepCard number={2} title={t('unixStep2')}>
+                  <p className="text-sm text-glow-400 font-medium mb-3">
+                    Replace <code className="bg-glow-500/10 px-1.5 py-0.5 rounded text-glow-300">sk-or-v1-YOUR_KEY_HERE</code> with your actual API key.
+                  </p>
+                  <CodeBlock code={unixExportLines} language="bash" />
+                </StepCard>
 
-                {/* Step 3 */}
-                <div>
-                  <StepCard number={3} title={t('unixStep3')} />
-                </div>
+                <StepCard number={3} title={t('unixStep3')} />
 
-                {/* Step 4 */}
-                <div>
-                  <StepCard number={4} title={t('unixStep4')}>
-                    <CodeBlock code="source ~/.zshrc    # or: source ~/.bashrc" language="bash" />
-                  </StepCard>
-                </div>
+                <StepCard number={4} title={t('unixStep4')}>
+                  <CodeBlock code="source ~/.zshrc    # or: source ~/.bashrc" language="bash" />
+                </StepCard>
               </div>
             );
           }
 
-          /* Windows tab */
           return (
             <div className="space-y-8">
-              {/* Option A — PowerShell */}
-              <div>
-                <StepCard
-                  number={1}
-                  title={
-                    <span className="flex items-center gap-2">
-                      {t('winPsTitle')}{' '}
-                      <Badge variant="success">{t('winPsRecommended')}</Badge>
-                    </span>
-                  }
-                >
-                  <p className="text-sm text-red-600 font-medium mb-3">
-                    Replace <code className="bg-red-50 px-1.5 py-0.5 rounded text-red-700">sk-or-v1-YOUR_KEY_HERE</code> with your actual API key.
-                  </p>
-                  <CodeBlock code={winPsLines} language="powershell" />
-                  <p className="text-sm text-surface-600 mt-3">{t('winPsAfter')}</p>
-                </StepCard>
-              </div>
+              <StepCard
+                number={1}
+                title={
+                  <span className="flex items-center gap-2">
+                    {t('winPsTitle')}{' '}
+                    <Badge variant="success">{t('winPsRecommended')}</Badge>
+                  </span>
+                }
+              >
+                <p className="text-sm text-glow-400 font-medium mb-3">
+                  Replace <code className="bg-glow-500/10 px-1.5 py-0.5 rounded text-glow-300">sk-or-v1-YOUR_KEY_HERE</code> with your actual API key.
+                </p>
+                <CodeBlock code={winPsLines} language="powershell" />
+                <p className="text-sm text-surface-400 mt-3">{t('winPsAfter')}</p>
+              </StepCard>
 
-              <hr className="border-surface-200" />
+              <hr className="border-white/[0.06]" />
 
-              {/* Option B — GUI */}
-              <div>
-                <StepCard
-                  number={2}
-                  title={t('winGuiTitle')}
-                >
-                  <ol className="list-decimal list-inside text-sm text-surface-700 space-y-2 mb-4">
-                    <li>{t('winGuiStep1')}</li>
-                    <li>{t('winGuiStep2')}</li>
-                    <li>{t('winGuiStep3')}</li>
-                  </ol>
+              <StepCard number={2} title={t('winGuiTitle')}>
+                <ol className="list-decimal list-inside text-sm text-surface-300 space-y-2 mb-4">
+                  <li>{t('winGuiStep1')}</li>
+                  <li>{t('winGuiStep2')}</li>
+                  <li>{t('winGuiStep3')}</li>
+                </ol>
 
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border border-surface-200 rounded-lg overflow-hidden">
-                      <thead>
-                        <tr className="bg-surface-50">
-                          <th className="text-left px-4 py-2 font-semibold text-surface-700 border-b border-surface-200">Variable Name</th>
-                          <th className="text-left px-4 py-2 font-semibold text-surface-700 border-b border-surface-200">Value</th>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm border border-white/[0.06] rounded-lg overflow-hidden">
+                    <thead>
+                      <tr className="bg-white/[0.03]">
+                        <th className="text-left px-4 py-2 font-semibold text-surface-300 border-b border-white/[0.06]">Variable Name</th>
+                        <th className="text-left px-4 py-2 font-semibold text-surface-300 border-b border-white/[0.06]">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {envVarRows.map((row) => (
+                        <tr key={row.name} className="border-b border-white/[0.04] last:border-b-0">
+                          <td className="px-4 py-2 font-mono text-xs text-white">{row.name}</td>
+                          <td className="px-4 py-2 font-mono text-xs text-surface-400">{row.value}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {envVarRows.map((row) => (
-                          <tr key={row.name} className="border-b border-surface-100 last:border-b-0">
-                            <td className="px-4 py-2 font-mono text-xs text-surface-800">{row.name}</td>
-                            <td className="px-4 py-2 font-mono text-xs text-surface-600">{row.value}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-                  <p className="text-sm text-surface-600 mt-3">{t('winGuiAfter')}</p>
-                </StepCard>
-              </div>
+                <p className="text-sm text-surface-400 mt-3">{t('winGuiAfter')}</p>
+              </StepCard>
             </div>
           );
         }}
@@ -154,6 +129,6 @@ export default function ConfigureEnvVars() {
           {t('warning')}
         </AlertBox>
       </div>
-    </section>
+    </div>
   );
 }

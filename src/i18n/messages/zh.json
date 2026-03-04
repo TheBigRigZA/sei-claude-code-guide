@@ -1,16 +1,116 @@
 {
   "meta": {
-    "title": "Claude Code 设置指南 — OpenRouter",
-    "description": "安装 Claude Code 并通过 OpenRouter 连接，获取 AI 编码助手。"
+    "title": "Claude Code 设置指南 — SEI Robotics",
+    "description": "安装 Claude Code，配置插件，通过 AI 编码助手加速你的开发工作流。"
   },
   "hero": {
     "badge": "内部员工指南",
     "subtitle": "设置指南",
-    "desc": "安装 Claude Code 并通过 <strong>OpenRouter</strong> 连接，获取 AI 编码助手。请按照以下步骤操作。",
+    "introTitle": "AI 驱动的编码，\n就在你的终端中。",
+    "introDesc": "Claude Code 是 Anthropic 官方 CLI 工具，将智能编码助手直接带入你的开发工作流。通过 OpenRouter 连接，它能理解你的代码库、编写代码、运行命令，帮助你更快交付。",
     "cta1": "开始使用",
-    "cta2": "快速参考",
-    "cta3": "快速上手场景",
+    "cta2": "插件与技能",
+    "cta3": "最佳实践",
     "cta4": "亿赛通指南"
+  },
+  "nav": {
+    "title": "跳转到章节",
+    "setup": "快速上手",
+    "setupDesc": "安装、配置和验证",
+    "plugins": "插件与技能",
+    "pluginsDesc": "通过强大集成扩展功能",
+    "combos": "最佳实践方案",
+    "combosDesc": "按使用场景推荐的工作流",
+    "dept": "部门工具",
+    "deptDesc": "适合你团队的 CLI 工具",
+    "scenarios": "项目场景",
+    "scenariosDesc": "新项目和现有项目的工作流",
+    "ai": "AI 助手",
+    "aiDesc": "获取个性化推荐",
+    "ref": "快速参考",
+    "refDesc": "命令和技巧一目了然",
+    "trouble": "故障排除",
+    "troubleDesc": "常见问题和解决方案"
+  },
+  "intro": {
+    "title": "什么是 Claude Code？",
+    "desc": "Claude Code 是一个命令行工具，可以让你在终端中直接连接 Anthropic 的 AI 助手 Claude。它能读取并理解你的整个代码库、编写和编辑文件、运行 shell 命令、搜索网络，帮助你从头到尾完成功能开发。",
+    "f1": "终端原生",
+    "f1Desc": "在你已有的工作环境中使用 — 无需浏览器标签页，无需切换上下文。打开终端即可开始 AI 编码。",
+    "f2": "代码感知",
+    "f2Desc": "读取项目文件、理解架构、遵循你的编码约定，编写与现有模式匹配的代码。",
+    "f3": "插件生态",
+    "f3Desc": "通过插件扩展能力 — 文档查找、浏览器测试、代码审查、网络研究等。"
+  },
+  "plugins": {
+    "title": "插件与技能",
+    "desc": "插件为 Claude Code 扩展专业能力。安装一次即可在每个会话中使用。技能是插件内置的结构化工作流，引导 Claude 完成复杂的多步骤任务。",
+    "installHint": "通过 Claude Code CLI 安装：",
+    "catDev": "开发",
+    "catQuality": "代码质量",
+    "catResearch": "研究与文档",
+    "catGit": "Git 与 GitHub",
+    "catTest": "测试与调试",
+    "catPlan": "规划与工作流",
+    "catLang": "语言支持",
+    "featureDev": "功能开发",
+    "featureDevDesc": "深度代码库分析的引导式功能开发。探索架构、设计组件，并带有审查检查点。",
+    "frontendDesign": "前端设计",
+    "frontendDesignDesc": "创建独特的、生产级别的前端界面，具有卓越的设计质量。避免通用的 AI 美学风格。",
+    "playground": "Playground",
+    "playgroundDesc": "生成交互式 HTML 游乐场 — 自包含的单文件探索器，带实时预览和控件。",
+    "codeReview": "代码审查",
+    "codeReviewDesc": "审查拉取请求中的错误、逻辑问题、安全漏洞以及对项目规范的遵循情况。",
+    "prReviewToolkit": "PR 审查工具包",
+    "prReviewToolkitDesc": "全面的 PR 审查流水线，配备专门的代理处理静默失败、评论分析、测试覆盖率和类型设计。",
+    "codeSimplifier": "代码简化器",
+    "codeSimplifierDesc": "简化和优化代码的清晰度、一致性和可维护性，同时保留所有功能。",
+    "context7": "Context7",
+    "context7Desc": "直接从官方来源获取任何库的最新文档和代码示例。永远不用过时的文档。",
+    "firecrawl": "Firecrawl",
+    "firecrawlDesc": "处理所有网络操作 — 搜索、抓取、研究，从任何 URL 提取内容。返回为 AI 上下文优化的干净 Markdown。",
+    "claudeMd": "CLAUDE.md 管理",
+    "claudeMdDesc": "审计、改进和管理 CLAUDE.md 项目记忆文件。保持项目上下文新鲜且结构良好。",
+    "commitCommands": "提交命令",
+    "commitCommandsDesc": "精简的 git 工作流：创建提交、推送分支、创建拉取请求、清理已合并分支 — 全部在 Claude Code 中完成。",
+    "github": "GitHub",
+    "githubDesc": "GitHub 集成，直接通过 Claude Code 处理问题、拉取请求、检查和发布。",
+    "playwright": "Playwright",
+    "playwrightDesc": "浏览器自动化和测试。导航页面、填写表单、截图、检查元素、运行端到端测试。",
+    "superpowers": "超级能力",
+    "superpowersDesc": "结构化工作流集合：头脑风暴、TDD、系统化调试、计划编写、代码审查等。",
+    "typescriptLsp": "TypeScript LSP",
+    "typescriptLspDesc": "实时 TypeScript 诊断和类型检查，集成到 Claude Code 中，编码时即时捕获类型错误。",
+    "pyrightLsp": "Pyright LSP",
+    "pyrightLspDesc": "通过 Pyright 进行 Python 类型检查，集成到 Claude Code 中，捕获 Python 项目中的类型错误。"
+  },
+  "combos": {
+    "title": "最佳实践方案",
+    "desc": "针对常见开发工作流的推荐插件组合。每个方案都是经过验证的有效组合。",
+    "c1Title": "全栈功能开发",
+    "c1Desc": "从创意到实现，通过引导式探索、架构设计和质量关卡构建功能。",
+    "c1Plugins": "超级能力（头脑风暴）→ 功能开发 → 前端设计 → 超级能力（TDD）→ 代码审查",
+    "c1Use": "从零开始构建新功能",
+    "c2Title": "PR 与代码质量流水线",
+    "c2Desc": "通过自动化审查、简化和结构化提交确保每个拉取请求符合质量标准。",
+    "c2Plugins": "提交命令 → PR 审查工具包 → 代码简化器 → 代码审查",
+    "c2Use": "交付干净、经过审查的代码",
+    "c3Title": "研究与原型",
+    "c3Desc": "快速研究 API 和库，然后制作交互式演示，在构建前验证想法。",
+    "c3Plugins": "Firecrawl + Context7 → Playground → 前端设计",
+    "c3Use": "探索新技术并创建概念验证",
+    "c4Title": "Bug 调查",
+    "c4Desc": "系统性地识别根本原因，在浏览器中重现问题，并通过自动化测试验证修复。",
+    "c4Plugins": "超级能力（调试）→ Playwright → 代码审查",
+    "c4Use": "高效地查找和修复错误",
+    "c5Title": "项目引导",
+    "c5Desc": "以正确的结构、文档和上下文文件启动新项目，让 Claude 从第一天就理解你的项目。",
+    "c5Plugins": "CLAUDE.md 管理 + Context7 + 超级能力（头脑风暴）→ 超级能力（计划）",
+    "c5Use": "按最佳实践设置新项目",
+    "c6Title": "文档与学习",
+    "c6Desc": "访问最新文档，在网络上研究话题，维护活的项目文档。",
+    "c6Plugins": "Firecrawl + Context7 + CLAUDE.md 管理",
+    "c6Use": "保持更新并保持文档准确"
   },
   "toc": {
     "title": "目录",
@@ -26,6 +126,7 @@
   },
   "prereq": {
     "title": "前置条件",
+    "summary": "网络、终端、OpenRouter 账户和 Git（Windows）。",
     "internet": "网络",
     "internetDesc": "安装和 API 调用需要网络连接。",
     "terminal": "终端",
@@ -37,6 +138,7 @@
   },
   "key": {
     "title": "创建 OpenRouter API 密钥",
+    "summary": "注册账户、创建密钥并安全保存。",
     "step1": "访问 openrouter.ai 并点击注册。",
     "step1Note": "可以使用 Google、GitHub 或电子邮件注册。",
     "step2": "导航到设置 → 密钥。",
@@ -50,6 +152,7 @@
   },
   "install": {
     "title": "安装 Claude Code",
+    "summary": "选择您的操作系统并按步骤安装。",
     "macNativeTitle": "选项 A — 原生安装",
     "macNativeRecommended": "推荐",
     "macNativeDesc": "后台自动更新。打开终端并运行：",
@@ -76,6 +179,7 @@
   },
   "config": {
     "title": "配置环境变量",
+    "summary": "通过环境变量将请求路由到 OpenRouter。",
     "desc": "通过设置这些环境变量，让 Claude Code 通过 OpenRouter 路由请求。",
     "unixStep1": "步骤 1：用文本编辑器打开您的 shell 配置文件。",
     "zshLabel": "Zsh（macOS 默认）",
@@ -96,6 +200,7 @@
   },
   "verify": {
     "title": "启动和验证",
+    "summary": "打开新终端、启动 Claude Code 并测试连接。",
     "step1": "打开一个新的终端窗口",
     "step1Note": "旧窗口不会有新的环境变量。",
     "step2": "导航到任何项目文件夹并启动 Claude Code：",
@@ -200,7 +305,9 @@
     "templateDesc": "创建 CLAUDE.md 文件时，以此为起点："
   },
   "qref": {
-    "title": "快速参考"
+    "title": "快速参考",
+    "colWhat": "操作",
+    "colCommand": "命令 / 链接"
   },
   "tips": {
     "title": "提示和最佳实践",
@@ -218,7 +325,9 @@
     "copy": "复制",
     "copied": "已复制!",
     "langLabel": "中文 | EN",
-    "backToTop": "返回顶部"
+    "backToTop": "返回顶部",
+    "expand": "展开详情",
+    "collapse": "收起详情"
   },
   "footer": {
     "updated": "最后更新：2026年3月 · 仅供内部使用"

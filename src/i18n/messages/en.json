@@ -1,16 +1,116 @@
 {
   "meta": {
-    "title": "Claude Code Setup Guide — OpenRouter",
-    "description": "Install Claude Code and connect it to OpenRouter for AI-powered coding assistance."
+    "title": "Claude Code Setup Guide — SEI Robotics",
+    "description": "Install Claude Code, configure plugins, and supercharge your development workflow with AI-powered coding assistance."
   },
   "hero": {
     "badge": "Internal Staff Guide",
     "subtitle": "Setup Guide",
-    "desc": "Install Claude Code and connect it to <strong>OpenRouter</strong> for AI-powered coding assistance. Follow the steps below for your operating system.",
+    "introTitle": "AI-powered coding,\nright in your terminal.",
+    "introDesc": "Claude Code is Anthropic's official CLI that brings intelligent coding assistance directly into your development workflow. Connected through OpenRouter, it understands your codebase, writes code, runs commands, and helps you ship faster.",
     "cta1": "Get Started",
-    "cta2": "Quick Reference",
-    "cta3": "Getting Started Scenarios",
+    "cta2": "Plugins & Skills",
+    "cta3": "Best Practices",
     "cta4": "ESAFENET Guide"
+  },
+  "nav": {
+    "title": "Jump to Section",
+    "setup": "Getting Started",
+    "setupDesc": "Install, configure, and verify",
+    "plugins": "Plugins & Skills",
+    "pluginsDesc": "Extend with powerful integrations",
+    "combos": "Best Practice Setups",
+    "combosDesc": "Recommended workflows per use case",
+    "dept": "Department Tools",
+    "deptDesc": "CLI tools for your team",
+    "scenarios": "Project Scenarios",
+    "scenariosDesc": "Workflows for new and existing projects",
+    "ai": "AI Assistant",
+    "aiDesc": "Get personalized recommendations",
+    "ref": "Quick Reference",
+    "refDesc": "Commands and tips at a glance",
+    "trouble": "Troubleshooting",
+    "troubleDesc": "Common issues and fixes"
+  },
+  "intro": {
+    "title": "What is Claude Code?",
+    "desc": "Claude Code is a command-line tool that connects you to Claude, Anthropic's AI assistant, directly inside your terminal. It can read and understand your entire codebase, write and edit files, run shell commands, search the web, and help you build features from start to finish.",
+    "f1": "Terminal Native",
+    "f1Desc": "Works where you already work — no browser tabs, no context switching. Just open your terminal and start coding with AI.",
+    "f2": "Codebase Aware",
+    "f2Desc": "Reads your project files, understands architecture, follows your conventions, and writes code that fits your existing patterns.",
+    "f3": "Plugin Ecosystem",
+    "f3Desc": "Extend capabilities with plugins for documentation lookup, browser testing, code review, web research, and more."
+  },
+  "plugins": {
+    "title": "Plugins & Skills",
+    "desc": "Plugins extend Claude Code with specialized capabilities. Install them once and they're available in every session. Skills are built-in workflows within plugins that guide Claude through complex multi-step tasks.",
+    "installHint": "Install via the Claude Code CLI:",
+    "catDev": "Development",
+    "catQuality": "Code Quality",
+    "catResearch": "Research & Docs",
+    "catGit": "Git & GitHub",
+    "catTest": "Testing & Debugging",
+    "catPlan": "Planning & Workflow",
+    "catLang": "Language Support",
+    "featureDev": "Feature Dev",
+    "featureDevDesc": "Guided feature development with deep codebase analysis. Explores architecture, designs components, and implements with review checkpoints.",
+    "frontendDesign": "Frontend Design",
+    "frontendDesignDesc": "Creates distinctive, production-grade frontend interfaces with exceptional design quality. Avoids generic AI aesthetics.",
+    "playground": "Playground",
+    "playgroundDesc": "Generates interactive HTML playgrounds — self-contained single-file explorers with live previews and controls.",
+    "codeReview": "Code Review",
+    "codeReviewDesc": "Reviews pull requests for bugs, logic errors, security vulnerabilities, and adherence to project conventions.",
+    "prReviewToolkit": "PR Review Toolkit",
+    "prReviewToolkitDesc": "Comprehensive PR review pipeline with specialized agents for silent failures, comment analysis, test coverage, and type design.",
+    "codeSimplifier": "Code Simplifier",
+    "codeSimplifierDesc": "Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality.",
+    "context7": "Context7",
+    "context7Desc": "Retrieves up-to-date documentation and code examples for any library directly from official sources. Never work with outdated docs.",
+    "firecrawl": "Firecrawl",
+    "firecrawlDesc": "Handles all web operations — search, scrape, research, and extract content from any URL. Returns clean markdown optimized for AI context.",
+    "claudeMd": "CLAUDE.md Management",
+    "claudeMdDesc": "Audits, improves, and manages CLAUDE.md project memory files. Keeps your project context fresh and well-structured.",
+    "commitCommands": "Commit Commands",
+    "commitCommandsDesc": "Streamlined git workflow: create commits, push branches, open pull requests, and clean up merged branches — all from Claude Code.",
+    "github": "GitHub",
+    "githubDesc": "GitHub integration for working with issues, pull requests, checks, and releases directly through Claude Code.",
+    "playwright": "Playwright",
+    "playwrightDesc": "Browser automation and testing. Navigate pages, fill forms, take screenshots, inspect elements, and run end-to-end tests.",
+    "superpowers": "Superpowers",
+    "superpowersDesc": "Collection of structured workflows: brainstorming, TDD, systematic debugging, plan writing, code review, and more.",
+    "typescriptLsp": "TypeScript LSP",
+    "typescriptLspDesc": "Real-time TypeScript diagnostics and type checking integrated into Claude Code for catching type errors as you code.",
+    "pyrightLsp": "Pyright LSP",
+    "pyrightLspDesc": "Python type checking via Pyright, integrated into Claude Code for catching type errors in Python projects."
+  },
+  "combos": {
+    "title": "Best Practice Setups",
+    "desc": "Recommended plugin combinations for common development workflows. Each setup is a proven combination that works well together.",
+    "c1Title": "Full-Stack Feature Dev",
+    "c1Desc": "Build features from idea to implementation with guided exploration, architecture design, and quality gates.",
+    "c1Plugins": "Superpowers (brainstorming) → Feature Dev → Frontend Design → Superpowers (TDD) → Code Review",
+    "c1Use": "Building new features from scratch",
+    "c2Title": "PR & Code Quality Pipeline",
+    "c2Desc": "Ensure every pull request meets quality standards with automated review, simplification, and structured commits.",
+    "c2Plugins": "Commit Commands → PR Review Toolkit → Code Simplifier → Code Review",
+    "c2Use": "Shipping clean, reviewed code",
+    "c3Title": "Research & Prototype",
+    "c3Desc": "Quickly research APIs and libraries, then prototype interactive demos to validate ideas before building.",
+    "c3Plugins": "Firecrawl + Context7 → Playground → Frontend Design",
+    "c3Use": "Exploring new technologies and creating proof-of-concepts",
+    "c4Title": "Bug Investigation",
+    "c4Desc": "Systematically identify root causes, reproduce issues in the browser, and verify fixes with automated testing.",
+    "c4Plugins": "Superpowers (debugging) → Playwright → Code Review",
+    "c4Use": "Finding and fixing bugs efficiently",
+    "c5Title": "Project Bootstrap",
+    "c5Desc": "Start new projects with proper structure, documentation, and context files so Claude understands your project from day one.",
+    "c5Plugins": "CLAUDE.md Management + Context7 + Superpowers (brainstorming) → Superpowers (plans)",
+    "c5Use": "Setting up new projects with best practices",
+    "c6Title": "Documentation & Learning",
+    "c6Desc": "Access up-to-date docs, research topics on the web, and maintain living project documentation.",
+    "c6Plugins": "Firecrawl + Context7 + CLAUDE.md Management",
+    "c6Use": "Staying current and keeping docs accurate"
   },
   "toc": {
     "title": "Table of Contents",
@@ -26,6 +126,7 @@
   },
   "prereq": {
     "title": "Prerequisites",
+    "summary": "Internet, terminal, OpenRouter account, and Git (Windows).",
     "internet": "Internet",
     "internetDesc": "Required for installation and API calls.",
     "terminal": "Terminal",
@@ -37,6 +138,7 @@
   },
   "key": {
     "title": "Create an OpenRouter API Key",
+    "summary": "Sign up, create a key, and store it securely.",
     "step1": "Go to openrouter.ai and click Sign Up.",
     "step1Note": "You can sign up with Google, GitHub, or email.",
     "step2": "Navigate to Settings → Keys.",
@@ -50,6 +152,7 @@
   },
   "install": {
     "title": "Install Claude Code",
+    "summary": "Choose your OS and follow the install steps.",
     "macNativeTitle": "Option A — Native Install",
     "macNativeRecommended": "Recommended",
     "macNativeDesc": "Auto-updates in the background. Open Terminal and run:",
@@ -76,6 +179,7 @@
   },
   "config": {
     "title": "Configure Environment Variables",
+    "summary": "Route requests through OpenRouter with environment variables.",
     "desc": "Tell Claude Code to route requests through OpenRouter by setting these environment variables.",
     "unixStep1": "Step 1: Open your shell profile in a text editor.",
     "zshLabel": "Zsh (default on macOS)",
@@ -96,6 +200,7 @@
   },
   "verify": {
     "title": "Launch & Verify",
+    "summary": "Open a new terminal, launch Claude Code, and test the connection.",
     "step1": "Open a new terminal window",
     "step1Note": "Old windows won't have the new environment variables.",
     "step2": "Navigate to any project folder and launch Claude Code:",
@@ -200,7 +305,9 @@
     "templateDesc": "Use this as a starting point when creating your CLAUDE.md file:"
   },
   "qref": {
-    "title": "Quick Reference"
+    "title": "Quick Reference",
+    "colWhat": "What",
+    "colCommand": "Command / Link"
   },
   "tips": {
     "title": "Tips & Best Practices",
@@ -218,7 +325,9 @@
     "copy": "Copy",
     "copied": "Copied!",
     "langLabel": "EN | 中文",
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "expand": "Show details",
+    "collapse": "Hide details"
   },
   "footer": {
     "updated": "Last updated: March 2026 · Internal use only"

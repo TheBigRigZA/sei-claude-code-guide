@@ -1,14 +1,20 @@
 import type { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Outfit, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import '../globals.css';
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-outfit',
+  display: 'swap',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
   display: 'swap',
 });
 
@@ -55,8 +61,8 @@ export default async function LocaleLayout({
   const messages = (await import(`@/i18n/messages/${locale}.json`)).default;
 
   return (
-    <html lang={locale === 'zh' ? 'zh-CN' : 'en'} className={`${inter.variable} ${jetbrainsMono.variable} scroll-smooth`}>
-      <body className="bg-surface-50 text-surface-800 antialiased font-sans">
+    <html lang={locale === 'zh' ? 'zh-CN' : 'en'} className={`${outfit.variable} ${dmSans.variable} ${jetbrainsMono.variable} scroll-smooth`}>
+      <body className="bg-surface-950 text-surface-200 antialiased font-sans">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
