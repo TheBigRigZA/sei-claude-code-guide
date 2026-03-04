@@ -46,6 +46,7 @@
     "title": "Plugins & Skills",
     "desc": "Plugins extend Claude Code with specialized capabilities. Install them once and they're available in every session. Skills are built-in workflows within plugins that guide Claude through complex multi-step tasks.",
     "installHint": "Install via the Claude Code CLI:",
+    "marketplaceHint": "Or browse and install all recommended plugins at once from the official marketplace:",
     "catDev": "Development",
     "catQuality": "Code Quality",
     "catResearch": "Research & Docs",

@@ -60,15 +60,28 @@ export default function PluginsSkills() {
         </p>
       </div>
 
-      {/* Install hint */}
-      <div className="mb-8 rounded-xl glass p-4 flex items-center gap-3 text-sm">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-500/10 text-accent-400 font-mono text-xs font-bold">
-          $
-        </span>
-        <span className="text-surface-400">
-          {t('installHint')}{' '}
-          <code className="text-accent-300 font-mono">claude plugin add &lt;plugin-name&gt;</code>
-        </span>
+      {/* Install hints */}
+      <div className="mb-8 space-y-3">
+        <div className="rounded-xl glass p-4 flex items-center gap-3 text-sm">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-500/10 text-accent-400 font-mono text-xs font-bold">
+            $
+          </span>
+          <span className="text-surface-400">
+            {t('installHint')}{' '}
+            <code className="text-accent-300 font-mono">claude plugin add &lt;plugin-name&gt;</code>
+          </span>
+        </div>
+        <div className="rounded-xl glass p-4 flex items-start gap-3 text-sm">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-glow-500/10 text-glow-400 font-mono text-xs font-bold">
+            ★
+          </span>
+          <div className="text-surface-400">
+            <span>{t('marketplaceHint')}</span>
+            <code className="block mt-2 text-accent-300 font-mono bg-surface-950/50 rounded-lg px-3 py-2 text-xs">
+              /install-plugin marketplace add anthropics/claude-code
+            </code>
+          </div>
+        </div>
       </div>
 
       {/* Category filter tabs */}

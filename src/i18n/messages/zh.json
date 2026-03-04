@@ -46,6 +46,7 @@
     "title": "插件与技能",
     "desc": "插件为 Claude Code 扩展专业能力。安装一次即可在每个会话中使用。技能是插件内置的结构化工作流，引导 Claude 完成复杂的多步骤任务。",
     "installHint": "通过 Claude Code CLI 安装：",
+    "marketplaceHint": "或从官方市场一次性浏览并安装所有推荐插件：",
     "catDev": "开发",
     "catQuality": "代码质量",
     "catResearch": "研究与文档",
